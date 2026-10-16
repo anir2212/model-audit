@@ -1,0 +1,18 @@
+name: ModelAudit local UCI credit audit
+scope: Demonstration scorecard and XGBoost on licensed UCI datasets; no lending use
+risk_register:
+  discrimination: [FAIR-SEX-01, FAIR-AGE-01]
+  instability: [STAB-PSI-01, STAB-CSI-01]
+  miscalibration: [CAL-ECE-01]
+  poor_discrimination: [PERF-AUC-01]
+  nonmonotonicity: [ROB-MONO-01]
+  data_quality: [DQ-CAT-01]
+thresholds:
+  PERF-AUC-01: {metric: auc, warn_below: 0.75, fail_below: 0.70}
+  CAL-ECE-01: {metric: ece, warn_above: 0.03, fail_above: 0.05}
+  STAB-PSI-01: {metric: psi, warn_above: 0.10, fail_above: 0.25}
+  STAB-CSI-01: {metric: max_csi, warn_above: 0.10, fail_above: 0.25}
+  FAIR-SEX-01: {metric: equalized_odds_difference, warn_above: 0.05, fail_above: 0.10}
+  FAIR-AGE-01: {metric: equalized_odds_difference, warn_above: 0.05, fail_above: 0.10}
+  ROB-MONO-01: {metric: violations, warn_above: 0, fail_above: 1}
+  DQ-CAT-01: {metric: invalid_categories, warn_above: 0, fail_above: 100}

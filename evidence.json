@@ -1,0 +1,51 @@
+{
+  "seed": 7,
+  "dataset": "synthetic",
+  "n": 400,
+  "tests": {
+    "PERF-AUC-01": {
+      "auc": 0.8004558357899334,
+      "ks": 0.45616333660880004,
+      "gini": 0.6009116715798668
+    },
+    "CAL-BRIER-01": {
+      "brier": 0.17298313
+    },
+    "STAB-PSI-01": {
+      "psi": 3.4094951795064876
+    },
+    "FAIR-01": {
+      "groups": {
+        "A": {
+          "approval_rate": 0.784688995215311,
+          "true_positive_rate": 0.8802816901408451
+        },
+        "B": {
+          "approval_rate": 0.643979057591623,
+          "true_positive_rate": 0.8189655172413793
+        }
+      },
+      "demographic_parity_difference": 0.140709937623688,
+      "equal_opportunity_difference": 0.06131617289946578
+    },
+    "ROB-MONO-01": {
+      "passed": true
+    }
+  },
+  "sha256": "b4f8047d20ad586860bb7ff3027116dcefe6bc49900148e88865c0c8d0b0841a",
+  "findings": [
+    {
+      "test_id": "STAB-PSI-01",
+      "severity": "high",
+      "reason": "PSI above local review threshold 0.25",
+      "status": "reproduced"
+    },
+    {
+      "test_id": "FAIR-01",
+      "severity": "medium",
+      "reason": "Approval-rate gap above local review threshold 0.1",
+      "status": "not reproduced"
+    }
+  ],
+  "revalidation_seed": 8
+}

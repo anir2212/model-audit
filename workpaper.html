@@ -1,0 +1,37 @@
+<!doctype html><html><meta charset='utf-8'><title>ModelAudit workpaper</title><body><h1>ModelAudit synthetic workpaper</h1><h2>Findings</h2><pre>[
+  {
+    &quot;test_id&quot;: &quot;STAB-PSI-01&quot;,
+    &quot;severity&quot;: &quot;high&quot;,
+    &quot;reason&quot;: &quot;PSI above local review threshold 0.25&quot;,
+    &quot;status&quot;: &quot;reproduced&quot;
+  },
+  {
+    &quot;test_id&quot;: &quot;FAIR-01&quot;,
+    &quot;severity&quot;: &quot;medium&quot;,
+    &quot;reason&quot;: &quot;Approval-rate gap above local review threshold 0.1&quot;,
+    &quot;status&quot;: &quot;not reproduced&quot;
+  }
+]</pre><section><h2>PERF-AUC-01</h2><pre>{
+  &quot;auc&quot;: 0.8004558357899334,
+  &quot;ks&quot;: 0.45616333660880004,
+  &quot;gini&quot;: 0.6009116715798668
+}</pre><p>Evidence hash: b4f8047d20ad586860bb7ff3027116dcefe6bc49900148e88865c0c8d0b0841a</p></section><section><h2>CAL-BRIER-01</h2><pre>{
+  &quot;brier&quot;: 0.17298313
+}</pre><p>Evidence hash: b4f8047d20ad586860bb7ff3027116dcefe6bc49900148e88865c0c8d0b0841a</p></section><section><h2>STAB-PSI-01</h2><pre>{
+  &quot;psi&quot;: 3.4094951795064876
+}</pre><p>Evidence hash: b4f8047d20ad586860bb7ff3027116dcefe6bc49900148e88865c0c8d0b0841a</p></section><section><h2>FAIR-01</h2><pre>{
+  &quot;groups&quot;: {
+    &quot;A&quot;: {
+      &quot;approval_rate&quot;: 0.784688995215311,
+      &quot;true_positive_rate&quot;: 0.8802816901408451
+    },
+    &quot;B&quot;: {
+      &quot;approval_rate&quot;: 0.643979057591623,
+      &quot;true_positive_rate&quot;: 0.8189655172413793
+    }
+  },
+  &quot;demographic_parity_difference&quot;: 0.140709937623688,
+  &quot;equal_opportunity_difference&quot;: 0.06131617289946578
+}</pre><p>Evidence hash: b4f8047d20ad586860bb7ff3027116dcefe6bc49900148e88865c0c8d0b0841a</p></section><section><h2>ROB-MONO-01</h2><pre>{
+  &quot;passed&quot;: true
+}</pre><p>Evidence hash: b4f8047d20ad586860bb7ff3027116dcefe6bc49900148e88865c0c8d0b0841a</p></section></body></html>
