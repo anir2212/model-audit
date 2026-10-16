@@ -1,0 +1,67 @@
+{
+  "dataset": "german",
+  "rows_explained": 100,
+  "xgb_shap_global_top10": [
+    {
+      "feature": "cat__A01_A14",
+      "mean_abs_shap": 0.4713290333747864
+    },
+    {
+      "feature": "num__A02",
+      "mean_abs_shap": 0.235748752951622
+    },
+    {
+      "feature": "cat__A03_A34",
+      "mean_abs_shap": 0.20800858736038208
+    },
+    {
+      "feature": "num__A05",
+      "mean_abs_shap": 0.19495922327041626
+    },
+    {
+      "feature": "cat__A01_A11",
+      "mean_abs_shap": 0.18921680748462677
+    },
+    {
+      "feature": "num__A08",
+      "mean_abs_shap": 0.1332424283027649
+    },
+    {
+      "feature": "num__A13",
+      "mean_abs_shap": 0.1268044263124466
+    },
+    {
+      "feature": "cat__A04_A40",
+      "mean_abs_shap": 0.11415299773216248
+    },
+    {
+      "feature": "cat__A07_A74",
+      "mean_abs_shap": 0.1027626022696495
+    },
+    {
+      "feature": "cat__A04_A41",
+      "mean_abs_shap": 0.10129211097955704
+    }
+  ],
+  "xgb_first_case_adverse_top3": [
+    {
+      "feature": "cat__A01_A14",
+      "shap_log_odds": 0.31417495012283325
+    },
+    {
+      "feature": "num__A05",
+      "shap_log_odds": 0.15592725574970245
+    },
+    {
+      "feature": "num__A08",
+      "shap_log_odds": 0.11538189649581909
+    }
+  ],
+  "scorecard_first_case_reason_codes": [
+    "A01",
+    "A08",
+    "A06"
+  ],
+  "scorecard_top3_overlap_under_1pct_amount_change": 1.0,
+  "warning": "SHAP is model explanation in log-odds space, not a causal reason or lawful adverse-action notice."
+}

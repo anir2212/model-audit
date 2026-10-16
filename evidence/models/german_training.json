@@ -1,0 +1,29 @@
+{
+  "dataset": "german",
+  "provenance": {
+    "rows": 1000,
+    "sha256_zip": "e12d9d5def6845c0622634a1cd2ab87fa470668c4298f1ec52a4e403376a435b",
+    "split_warning": "stratified random split; no time field"
+  },
+  "split_sizes": {
+    "train": 750,
+    "test": 250
+  },
+  "test_default_rate": 0.3,
+  "test_metrics": {
+    "scorecard": {
+      "auc": 0.8141714285714287,
+      "brier": 0.15648754620485295,
+      "risk_mean": 0.3058268746416055
+    },
+    "xgb": {
+      "auc": 0.8032,
+      "brier": 0.15993010527814608,
+      "risk_mean": 0.304029643535614
+    }
+  },
+  "models": {
+    "scorecard": "quantile/category WoE logistic with PDO points",
+    "xgb": "XGBClassifier, 100 trees, depth 3"
+  }
+}

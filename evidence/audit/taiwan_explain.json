@@ -1,0 +1,67 @@
+{
+  "dataset": "taiwan",
+  "rows_explained": 100,
+  "xgb_shap_global_top10": [
+    {
+      "feature": "num__PAY_0",
+      "mean_abs_shap": 0.5742000341415405
+    },
+    {
+      "feature": "num__PAY_AMT2",
+      "mean_abs_shap": 0.0914265364408493
+    },
+    {
+      "feature": "num__PAY_5",
+      "mean_abs_shap": 0.0797201469540596
+    },
+    {
+      "feature": "num__PAY_AMT1",
+      "mean_abs_shap": 0.07878690958023071
+    },
+    {
+      "feature": "num__LIMIT_BAL",
+      "mean_abs_shap": 0.07741788774728775
+    },
+    {
+      "feature": "num__PAY_AMT3",
+      "mean_abs_shap": 0.06772103905677795
+    },
+    {
+      "feature": "num__PAY_2",
+      "mean_abs_shap": 0.06638272851705551
+    },
+    {
+      "feature": "num__BILL_AMT1",
+      "mean_abs_shap": 0.06513115018606186
+    },
+    {
+      "feature": "num__PAY_4",
+      "mean_abs_shap": 0.05817516893148422
+    },
+    {
+      "feature": "num__PAY_3",
+      "mean_abs_shap": 0.05667481571435928
+    }
+  ],
+  "xgb_first_case_adverse_top3": [
+    {
+      "feature": "num__PAY_0",
+      "shap_log_odds": 1.6539591550827026
+    },
+    {
+      "feature": "num__PAY_2",
+      "shap_log_odds": 0.18914002180099487
+    },
+    {
+      "feature": "num__LIMIT_BAL",
+      "shap_log_odds": 0.05639992654323578
+    }
+  ],
+  "scorecard_first_case_reason_codes": [
+    "PAY_0",
+    "LIMIT_BAL",
+    "PAY_AMT1"
+  ],
+  "scorecard_top3_overlap_under_1pct_amount_change": 0.9833333333333333,
+  "warning": "SHAP is model explanation in log-odds space, not a causal reason or lawful adverse-action notice."
+}

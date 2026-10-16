@@ -1,0 +1,469 @@
+{
+  "dataset": "taiwan",
+  "model": "scorecard",
+  "provenance": {
+    "rows": 30000,
+    "sha256_zip": "56c885f84457f6680f8438f02bfcdac9579323d8a94465ee5f26e32baa727602",
+    "split_warning": "ID-order proxy cohorts; dataset has no true application timestamp"
+  },
+  "audit_plan": "configs/audit_plan.yaml",
+  "test_cohort_rows": 6000,
+  "confirmation_source": "disjoint ID-proxy validation cohort (previous 6,000 rows)",
+  "tests": {
+    "PERF-AUC-01": {
+      "status": "pass",
+      "values": {
+        "auc": 0.7836948570757338,
+        "auc_ci95": [
+          0.7703127158591869,
+          0.7981650080238237
+        ],
+        "ks": 0.4284824712626417,
+        "gini": 0.5673897141514677,
+        "count": 6000
+      },
+      "threshold": {
+        "metric": "auc",
+        "warn_below": 0.75,
+        "fail_below": 0.7
+      }
+    },
+    "CAL-ECE-01": {
+      "status": "pass",
+      "values": {
+        "brier": 0.1293283414401038,
+        "ece": 0.02324224443776516,
+        "calibration_in_the_large": -0.003090745277377932,
+        "hosmer_lemeshow_stat": 29.891477235316067,
+        "hosmer_lemeshow_df": 8,
+        "hosmer_lemeshow_p": 0.00022092081386787028,
+        "reliability_bins": [
+          {
+            "bin": 0,
+            "count": 600,
+            "observed_rate": 0.051666666666666666,
+            "predicted_rate": 0.07324362398348597
+          },
+          {
+            "bin": 1,
+            "count": 600,
+            "observed_rate": 0.06333333333333334,
+            "predicted_rate": 0.0936312071641383
+          },
+          {
+            "bin": 2,
+            "count": 600,
+            "observed_rate": 0.085,
+            "predicted_rate": 0.10930947738704729
+          },
+          {
+            "bin": 3,
+            "count": 600,
+            "observed_rate": 0.09833333333333333,
+            "predicted_rate": 0.12381780763090343
+          },
+          {
+            "bin": 4,
+            "count": 600,
+            "observed_rate": 0.10833333333333334,
+            "predicted_rate": 0.13832949907680706
+          },
+          {
+            "bin": 5,
+            "count": 600,
+            "observed_rate": 0.16333333333333333,
+            "predicted_rate": 0.15533682664036366
+          },
+          {
+            "bin": 6,
+            "count": 600,
+            "observed_rate": 0.20333333333333334,
+            "predicted_rate": 0.1792204979389362
+          },
+          {
+            "bin": 7,
+            "count": 600,
+            "observed_rate": 0.24333333333333335,
+            "predicted_rate": 0.22725554028534817
+          },
+          {
+            "bin": 8,
+            "count": 600,
+            "observed_rate": 0.39,
+            "predicted_rate": 0.3708807057008865
+          },
+          {
+            "bin": 9,
+            "count": 600,
+            "observed_rate": 0.7033333333333334,
+            "predicted_rate": 0.6698822669658626
+          }
+        ]
+      },
+      "threshold": {
+        "metric": "ece",
+        "warn_above": 0.03,
+        "fail_above": 0.05
+      }
+    },
+    "STAB-PSI-01": {
+      "status": "pass",
+      "values": {
+        "psi": 0.009013948217124014,
+        "baseline_test_psi": 0.012157855610367906,
+        "scenario": "limit -20% and age +5"
+      },
+      "threshold": {
+        "metric": "psi",
+        "warn_above": 0.1,
+        "fail_above": 0.25
+      }
+    },
+    "STAB-CSI-01": {
+      "status": "fail",
+      "values": {
+        "max_csi": 0.29407266523914694,
+        "feature": "LIMIT_BAL",
+        "baseline_test_csi": 0.012817605796263731
+      },
+      "threshold": {
+        "metric": "max_csi",
+        "warn_above": 0.1,
+        "fail_above": 0.25
+      }
+    },
+    "FAIR-SEX-01": {
+      "status": "pass",
+      "values": {
+        "threshold": 0.25,
+        "groups": {
+          "female": {
+            "approval_rate": 0.7907053394858273,
+            "good_outcome_tpr": 0.867563162184189
+          },
+          "male": {
+            "approval_rate": 0.7670262980445044,
+            "good_outcome_tpr": 0.8614035087719298
+          }
+        },
+        "demographic_parity_difference": 0.023679041441322934,
+        "equalized_odds_difference": 0.01216447170001006,
+        "approval_rate_ratio": 0.9700532673059717,
+        "overall_approval_rate": 0.779,
+        "approved_observed_default_rate": 0.12430466409927257
+      },
+      "threshold": {
+        "metric": "equalized_odds_difference",
+        "warn_above": 0.05,
+        "fail_above": 0.1
+      }
+    },
+    "FAIR-AGE-01": {
+      "status": "pass",
+      "values": {
+        "threshold": 0.25,
+        "groups": {
+          "35plus": {
+            "approval_rate": 0.7747234327857861,
+            "good_outcome_tpr": 0.8615185504745471
+          },
+          "under35": {
+            "approval_rate": 0.7832283725555187,
+            "good_outcome_tpr": 0.8675496688741722
+          }
+        },
+        "demographic_parity_difference": 0.008504939769732545,
+        "equalized_odds_difference": 0.027920883740132352,
+        "approval_rate_ratio": 0.9891411750802864,
+        "overall_approval_rate": 0.779,
+        "approved_observed_default_rate": 0.12430466409927257
+      },
+      "threshold": {
+        "metric": "equalized_odds_difference",
+        "warn_above": 0.05,
+        "fail_above": 0.1
+      }
+    },
+    "ROB-MONO-01": {
+      "status": "fail",
+      "values": {
+        "test_feature": "PAY_0 missed-payment months",
+        "violations": 66,
+        "sample_rows": 400,
+        "max_absolute_change": 0.2632604534713758,
+        "missing_predictions_finite": true
+      },
+      "threshold": {
+        "metric": "violations",
+        "warn_above": 0,
+        "fail_above": 1
+      }
+    },
+    "DQ-CAT-01": {
+      "status": "fail",
+      "values": {
+        "rows": 6000,
+        "null_cells": 0,
+        "duplicate_feature_rows": 2,
+        "invalid_categories": 103,
+        "label_out_of_range": 0,
+        "id_and_target_excluded": true
+      },
+      "threshold": {
+        "metric": "invalid_categories",
+        "warn_above": 0,
+        "fail_above": 100
+      }
+    },
+    "FAIR-TRADEOFF": {
+      "status": "information",
+      "values": {
+        "thresholds": [
+          {
+            "threshold": 0.15,
+            "groups": {
+              "female": {
+                "approval_rate": 0.5560316413974951,
+                "good_outcome_tpr": 0.632436837815811
+              },
+              "male": {
+                "approval_rate": 0.48988536749831424,
+                "good_outcome_tpr": 0.5789473684210527
+              }
+            },
+            "demographic_parity_difference": 0.06614627389918082,
+            "equalized_odds_difference": 0.05348946939475829,
+            "approval_rate_ratio": 0.8810386514462866,
+            "overall_approval_rate": 0.5233333333333333,
+            "approved_observed_default_rate": 0.08535031847133757
+          },
+          {
+            "threshold": 0.2,
+            "groups": {
+              "female": {
+                "approval_rate": 0.7336849044166117,
+                "good_outcome_tpr": 0.8125509372453138
+              },
+              "male": {
+                "approval_rate": 0.6894807821982468,
+                "good_outcome_tpr": 0.787719298245614
+              }
+            },
+            "demographic_parity_difference": 0.044204122218364894,
+            "equalized_odds_difference": 0.03702623906705543,
+            "approval_rate_ratio": 0.9397505360240256,
+            "overall_approval_rate": 0.7118333333333333,
+            "approved_observed_default_rate": 0.11261999531725592
+          },
+          {
+            "threshold": 0.25,
+            "groups": {
+              "female": {
+                "approval_rate": 0.7907053394858273,
+                "good_outcome_tpr": 0.867563162184189
+              },
+              "male": {
+                "approval_rate": 0.7670262980445044,
+                "good_outcome_tpr": 0.8614035087719298
+              }
+            },
+            "demographic_parity_difference": 0.023679041441322934,
+            "equalized_odds_difference": 0.01216447170001006,
+            "approval_rate_ratio": 0.9700532673059717,
+            "overall_approval_rate": 0.779,
+            "approved_observed_default_rate": 0.12430466409927257
+          },
+          {
+            "threshold": 0.3,
+            "groups": {
+              "female": {
+                "approval_rate": 0.8226763348714569,
+                "good_outcome_tpr": 0.8964955175224124
+              },
+              "male": {
+                "approval_rate": 0.7963587322993931,
+                "good_outcome_tpr": 0.8894736842105263
+              }
+            },
+            "demographic_parity_difference": 0.026317602572063725,
+            "equalized_odds_difference": 0.02346436111390371,
+            "approval_rate_ratio": 0.9680097731555924,
+            "overall_approval_rate": 0.8096666666666666,
+            "approved_observed_default_rate": 0.12968299711815562
+          },
+          {
+            "threshold": 0.35,
+            "groups": {
+              "female": {
+                "approval_rate": 0.8599208965062624,
+                "good_outcome_tpr": 0.9299103504482478
+              },
+              "male": {
+                "approval_rate": 0.8256911665542819,
+                "good_outcome_tpr": 0.9153508771929825
+              }
+            },
+            "demographic_parity_difference": 0.03422972995198048,
+            "equalized_odds_difference": 0.036096310445360325,
+            "approval_rate_ratio": 0.9601943270700235,
+            "overall_approval_rate": 0.843,
+            "approved_observed_default_rate": 0.1362198497429814
+          }
+        ]
+      },
+      "threshold": null
+    },
+    "EXPL-SHAP-01": {
+      "status": "information",
+      "values": {
+        "dataset": "taiwan",
+        "rows_explained": 100,
+        "xgb_shap_global_top10": [
+          {
+            "feature": "num__PAY_0",
+            "mean_abs_shap": 0.5742000341415405
+          },
+          {
+            "feature": "num__PAY_AMT2",
+            "mean_abs_shap": 0.0914265364408493
+          },
+          {
+            "feature": "num__PAY_5",
+            "mean_abs_shap": 0.0797201469540596
+          },
+          {
+            "feature": "num__PAY_AMT1",
+            "mean_abs_shap": 0.07878690958023071
+          },
+          {
+            "feature": "num__LIMIT_BAL",
+            "mean_abs_shap": 0.07741788774728775
+          },
+          {
+            "feature": "num__PAY_AMT3",
+            "mean_abs_shap": 0.06772103905677795
+          },
+          {
+            "feature": "num__PAY_2",
+            "mean_abs_shap": 0.06638272851705551
+          },
+          {
+            "feature": "num__BILL_AMT1",
+            "mean_abs_shap": 0.06513115018606186
+          },
+          {
+            "feature": "num__PAY_4",
+            "mean_abs_shap": 0.05817516893148422
+          },
+          {
+            "feature": "num__PAY_3",
+            "mean_abs_shap": 0.05667481571435928
+          }
+        ],
+        "xgb_first_case_adverse_top3": [
+          {
+            "feature": "num__PAY_0",
+            "shap_log_odds": 1.6539591550827026
+          },
+          {
+            "feature": "num__PAY_2",
+            "shap_log_odds": 0.18914002180099487
+          },
+          {
+            "feature": "num__LIMIT_BAL",
+            "shap_log_odds": 0.05639992654323578
+          }
+        ],
+        "scorecard_first_case_reason_codes": [
+          "PAY_0",
+          "LIMIT_BAL",
+          "PAY_AMT1"
+        ],
+        "scorecard_top3_overlap_under_1pct_amount_change": 0.9833333333333333,
+        "warning": "SHAP is model explanation in log-odds space, not a causal reason or lawful adverse-action notice."
+      },
+      "threshold": null
+    },
+    "SURV-01": {
+      "status": "information",
+      "values": {
+        "dataset": "UCI Taiwan; retrospective April\u2013September payment statuses",
+        "people": 10000,
+        "person_month_rows": 50973,
+        "event_definition": "first recorded payment delay of at least two months",
+        "events": 2801,
+        "censored": 7199,
+        "cox_concordance_train": 0.6520831166192114,
+        "cox_hazard_ratios": {
+          "LIMIT_BAL": 0.7486072184023408,
+          "SEX": 0.9152345011329724,
+          "AGE": 0.9504288600537097,
+          "EDUCATION": 1.0427342693473656,
+          "MARRIAGE": 0.9900729352017101
+        },
+        "ph_test_p": {
+          "AGE": 0.8877453482639952,
+          "EDUCATION": 0.04681646040104071,
+          "LIMIT_BAL": 0.05282408133367339,
+          "MARRIAGE": 0.9230135173119021,
+          "SEX": 0.11013594798910528
+        },
+        "kaplan_meier": {
+          "limit_below_100k": {
+            "people": 3903,
+            "survival_at_3": 0.7494235203689473,
+            "survival_at_6": 0.5936459133999489
+          },
+          "limit_at_least_100k": {
+            "people": 6097,
+            "survival_at_3": 0.8807610300147616,
+            "survival_at_6": 0.8007216663933082
+          }
+        },
+        "discrete_hazard_train_auc": 0.7091065046785967,
+        "warning": "Exploratory in-sample survival fit; event is delinquency proxy, not observed default. PH checks are diagnostics, not proof. Static default label is a different endpoint and later features can leak into early-event prediction."
+      },
+      "threshold": null
+    }
+  },
+  "findings": [
+    {
+      "test_id": "STAB-CSI-01",
+      "severity": "high",
+      "observed": 0.29407266523914694,
+      "threshold": {
+        "metric": "max_csi",
+        "warn_above": 0.1,
+        "fail_above": 0.25
+      },
+      "confirmation": "reproduced",
+      "confirmation_value": 0.2908467882806627
+    },
+    {
+      "test_id": "ROB-MONO-01",
+      "severity": "high",
+      "observed": 66,
+      "threshold": {
+        "metric": "violations",
+        "warn_above": 0,
+        "fail_above": 1
+      },
+      "confirmation": "reproduced",
+      "confirmation_value": 51
+    },
+    {
+      "test_id": "DQ-CAT-01",
+      "severity": "high",
+      "observed": 103,
+      "threshold": {
+        "metric": "invalid_categories",
+        "warn_above": 0,
+        "fail_above": 100
+      },
+      "confirmation": "reproduced",
+      "confirmation_value": 107
+    }
+  ],
+  "scope": "research demonstration only; thresholds are local review heuristics",
+  "sha256": "ea39a375cd9d45b17f654bb7b7531663fb184394ff5a1bf696b411eaf5e69865"
+}

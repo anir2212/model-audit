@@ -1,0 +1,386 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>ModelAudit workpaper — german_scorecard</title>
+<style>body{font:15px system-ui;max-width:960px;margin:2rem auto;color:#1d2633}h1,h2{color:#153d64}section{border-top:1px solid #bbc;padding:1rem 0}pre{white-space:pre-wrap;background:#f2f5f8;padding:1rem;overflow:auto}.fail{color:#a82020}.warn{color:#9b5c00}small{color:#52606b}</style>
+<h1>ModelAudit workpaper — german_scorecard</h1><p>research demonstration only; thresholds are local review heuristics</p><p>Dataset: german · Model: scorecard · Test cohort: 250 rows</p>
+<p>Evidence SHA-256: <code>f9753a934bea3ee8b3f225b0638ef70bc2ee1f6e58e3916d46e66f587c8b156a</code></p><p>Finding confirmation: test subset; not an independent confirmation cohort</p>
+<h2>Findings</h2><section><strong class="medium">CAL-ECE-01 · medium</strong>
+<p>Observed 0.04711499223229103 · confirmation reproduced (0.10925798404274979)</p>
+<p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
+<p>Management response: ____________________</p></section><section><strong class="medium">STAB-CSI-01 · medium</strong>
+<p>Observed 0.12116270428342113 · confirmation reproduced (0.18723423330094985)</p>
+<p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
+<p>Management response: ____________________</p></section><section><strong class="medium">FAIR-SEX-01 · medium</strong>
+<p>Observed 0.1 · confirmation reproduced (0.15238095238095237)</p>
+<p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
+<p>Management response: ____________________</p></section><section><strong class="high">FAIR-AGE-01 · high</strong>
+<p>Observed 0.21065922381711855 · confirmation reproduced (0.20999999999999996)</p>
+<p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
+<p>Management response: ____________________</p></section><section><strong class="high">ROB-MONO-01 · high</strong>
+<p>Observed 21 · confirmation reproduced (10)</p>
+<p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
+<p>Management response: ____________________</p></section>
+<h2>Registered tests</h2><section><h3>PERF-AUC-01 — pass</h3>
+<p>Objective: evaluate the PERF-AUC-01 registered diagnostic on the stated cohort.</p>
+<p>Procedure and threshold:</p><pre>{
+  "fail_below": 0.7,
+  "metric": "auc",
+  "warn_below": 0.75
+}</pre>
+<p>Measured evidence:</p><pre>{
+  "auc": 0.8141714285714287,
+  "auc_ci95": [
+    0.7629245274824543,
+    0.8668489520696215
+  ],
+  "count": 250,
+  "gini": 0.6283428571428573,
+  "ks": 0.5295238095238095
+}</pre>
+<small>Source: runs/audit/german_scorecard.json; evidence hash f9753a934bea3ee8b3f225b0638ef70bc2ee1f6e58e3916d46e66f587c8b156a</small></section><section><h3>CAL-ECE-01 — warn</h3>
+<p>Objective: evaluate the CAL-ECE-01 registered diagnostic on the stated cohort.</p>
+<p>Procedure and threshold:</p><pre>{
+  "fail_above": 0.05,
+  "metric": "ece",
+  "warn_above": 0.03
+}</pre>
+<p>Measured evidence:</p><pre>{
+  "brier": 0.15648754620485295,
+  "calibration_in_the_large": -0.005826874641605528,
+  "ece": 0.04711499223229103,
+  "hosmer_lemeshow_df": 8,
+  "hosmer_lemeshow_p": 0.6255233912183731,
+  "hosmer_lemeshow_stat": 6.19388928599065,
+  "reliability_bins": [
+    {
+      "bin": 0,
+      "count": 25,
+      "observed_rate": 0.04,
+      "predicted_rate": 0.03191449935790145
+    },
+    {
+      "bin": 1,
+      "count": 25,
+      "observed_rate": 0.04,
+      "predicted_rate": 0.07453117241587133
+    },
+    {
+      "bin": 2,
+      "count": 25,
+      "observed_rate": 0.0,
+      "predicted_rate": 0.12501639650584248
+    },
+    {
+      "bin": 3,
+      "count": 25,
+      "observed_rate": 0.2,
+      "predicted_rate": 0.1644679628625908
+    },
+    {
+      "bin": 4,
+      "count": 25,
+      "observed_rate": 0.2,
+      "predicted_rate": 0.2189447998877008
+    },
+    {
+      "bin": 5,
+      "count": 25,
+      "observed_rate": 0.28,
+      "predicted_rate": 0.2924595594061095
+    },
+    {
+      "bin": 6,
+      "count": 25,
+      "observed_rate": 0.4,
+      "predicted_rate": 0.3874203219272815
+    },
+    {
+      "bin": 7,
+      "count": 25,
+      "observed_rate": 0.56,
+      "predicted_rate": 0.4766219149204106
+    },
+    {
+      "bin": 8,
+      "count": 25,
+      "observed_rate": 0.64,
+      "predicted_rate": 0.573134712978388
+    },
+    {
+      "bin": 9,
+      "count": 25,
+      "observed_rate": 0.64,
+      "predicted_rate": 0.7137574061539584
+    }
+  ]
+}</pre>
+<small>Source: runs/audit/german_scorecard.json; evidence hash f9753a934bea3ee8b3f225b0638ef70bc2ee1f6e58e3916d46e66f587c8b156a</small></section><section><h3>STAB-PSI-01 — pass</h3>
+<p>Objective: evaluate the STAB-PSI-01 registered diagnostic on the stated cohort.</p>
+<p>Procedure and threshold:</p><pre>{
+  "fail_above": 0.25,
+  "metric": "psi",
+  "warn_above": 0.1
+}</pre>
+<p>Measured evidence:</p><pre>{
+  "baseline_test_psi": 0.05271587982764225,
+  "psi": 0.03466715595663763,
+  "scenario": "amount +25% and age +5"
+}</pre>
+<small>Source: runs/audit/german_scorecard.json; evidence hash f9753a934bea3ee8b3f225b0638ef70bc2ee1f6e58e3916d46e66f587c8b156a</small></section><section><h3>STAB-CSI-01 — warn</h3>
+<p>Objective: evaluate the STAB-CSI-01 registered diagnostic on the stated cohort.</p>
+<p>Procedure and threshold:</p><pre>{
+  "fail_above": 0.25,
+  "metric": "max_csi",
+  "warn_above": 0.1
+}</pre>
+<p>Measured evidence:</p><pre>{
+  "baseline_test_csi": 0.05001226836672981,
+  "feature": "A05",
+  "max_csi": 0.12116270428342113
+}</pre>
+<small>Source: runs/audit/german_scorecard.json; evidence hash f9753a934bea3ee8b3f225b0638ef70bc2ee1f6e58e3916d46e66f587c8b156a</small></section><section><h3>FAIR-SEX-01 — warn</h3>
+<p>Objective: evaluate the FAIR-SEX-01 registered diagnostic on the stated cohort.</p>
+<p>Procedure and threshold:</p><pre>{
+  "fail_above": 0.1,
+  "metric": "equalized_odds_difference",
+  "warn_above": 0.05
+}</pre>
+<p>Measured evidence:</p><pre>{
+  "approval_rate_ratio": 0.8271753681392235,
+  "approved_observed_default_rate": 0.09448818897637795,
+  "demographic_parity_difference": 0.09313902315850231,
+  "equalized_odds_difference": 0.1,
+  "groups": {
+    "female": {
+      "approval_rate": 0.4457831325301205,
+      "good_outcome_tpr": 0.6415094339622641
+    },
+    "male_or_other": {
+      "approval_rate": 0.5389221556886228,
+      "good_outcome_tpr": 0.6639344262295082
+    }
+  },
+  "overall_approval_rate": 0.508,
+  "threshold": 0.25
+}</pre>
+<small>Source: runs/audit/german_scorecard.json; evidence hash f9753a934bea3ee8b3f225b0638ef70bc2ee1f6e58e3916d46e66f587c8b156a</small></section><section><h3>FAIR-AGE-01 — fail</h3>
+<p>Objective: evaluate the FAIR-AGE-01 registered diagnostic on the stated cohort.</p>
+<p>Procedure and threshold:</p><pre>{
+  "fail_above": 0.1,
+  "metric": "equalized_odds_difference",
+  "warn_above": 0.05
+}</pre>
+<p>Measured evidence:</p><pre>{
+  "approval_rate_ratio": 0.664663714948345,
+  "approved_observed_default_rate": 0.09448818897637795,
+  "demographic_parity_difference": 0.21433865642476918,
+  "equalized_odds_difference": 0.21065922381711855,
+  "groups": {
+    "35plus": {
+      "approval_rate": 0.6391752577319587,
+      "good_outcome_tpr": 0.7763157894736842
+    },
+    "under35": {
+      "approval_rate": 0.42483660130718953,
+      "good_outcome_tpr": 0.5656565656565656
+    }
+  },
+  "overall_approval_rate": 0.508,
+  "threshold": 0.25
+}</pre>
+<small>Source: runs/audit/german_scorecard.json; evidence hash f9753a934bea3ee8b3f225b0638ef70bc2ee1f6e58e3916d46e66f587c8b156a</small></section><section><h3>ROB-MONO-01 — fail</h3>
+<p>Objective: evaluate the ROB-MONO-01 registered diagnostic on the stated cohort.</p>
+<p>Procedure and threshold:</p><pre>{
+  "fail_above": 1,
+  "metric": "violations",
+  "warn_above": 0
+}</pre>
+<p>Measured evidence:</p><pre>{
+  "max_absolute_change": 0.11457027816975857,
+  "missing_predictions_finite": true,
+  "sample_rows": 250,
+  "test_feature": "A02 loan duration months (stress proxy)",
+  "violations": 21
+}</pre>
+<small>Source: runs/audit/german_scorecard.json; evidence hash f9753a934bea3ee8b3f225b0638ef70bc2ee1f6e58e3916d46e66f587c8b156a</small></section><section><h3>DQ-CAT-01 — pass</h3>
+<p>Objective: evaluate the DQ-CAT-01 registered diagnostic on the stated cohort.</p>
+<p>Procedure and threshold:</p><pre>{
+  "fail_above": 100,
+  "metric": "invalid_categories",
+  "warn_above": 0
+}</pre>
+<p>Measured evidence:</p><pre>{
+  "duplicate_feature_rows": 0,
+  "id_and_target_excluded": true,
+  "invalid_categories": 0,
+  "label_out_of_range": 0,
+  "null_cells": 0,
+  "rows": 250
+}</pre>
+<small>Source: runs/audit/german_scorecard.json; evidence hash f9753a934bea3ee8b3f225b0638ef70bc2ee1f6e58e3916d46e66f587c8b156a</small></section><section><h3>FAIR-TRADEOFF — information</h3>
+<p>Objective: evaluate the FAIR-TRADEOFF registered diagnostic on the stated cohort.</p>
+<p>Procedure and threshold:</p><pre>null</pre>
+<p>Measured evidence:</p><pre>{
+  "thresholds": [
+    {
+      "approval_rate_ratio": 0.6706827309236947,
+      "approved_observed_default_rate": 0.02631578947368421,
+      "demographic_parity_difference": 0.1124017026188587,
+      "equalized_odds_difference": 0.09232910609341172,
+      "groups": {
+        "female": {
+          "approval_rate": 0.2289156626506024,
+          "good_outcome_tpr": 0.3584905660377358
+        },
+        "male_or_other": {
+          "approval_rate": 0.3413173652694611,
+          "good_outcome_tpr": 0.45081967213114754
+        }
+      },
+      "overall_approval_rate": 0.304,
+      "threshold": 0.15
+    },
+    {
+      "approval_rate_ratio": 0.777991967871486,
+      "approved_observed_default_rate": 0.08653846153846154,
+      "demographic_parity_difference": 0.09970420604573982,
+      "equalized_odds_difference": 0.07500773275595418,
+      "groups": {
+        "female": {
+          "approval_rate": 0.3493975903614458,
+          "good_outcome_tpr": 0.49056603773584906
+        },
+        "male_or_other": {
+          "approval_rate": 0.4491017964071856,
+          "good_outcome_tpr": 0.5655737704918032
+        }
+      },
+      "overall_approval_rate": 0.416,
+      "threshold": 0.2
+    },
+    {
+      "approval_rate_ratio": 0.8271753681392235,
+      "approved_observed_default_rate": 0.09448818897637795,
+      "demographic_parity_difference": 0.09313902315850231,
+      "equalized_odds_difference": 0.1,
+      "groups": {
+        "female": {
+          "approval_rate": 0.4457831325301205,
+          "good_outcome_tpr": 0.6415094339622641
+        },
+        "male_or_other": {
+          "approval_rate": 0.5389221556886228,
+          "good_outcome_tpr": 0.6639344262295082
+        }
+      },
+      "overall_approval_rate": 0.508,
+      "threshold": 0.25
+    },
+    {
+      "approval_rate_ratio": 0.8739199221126932,
+      "approved_observed_default_rate": 0.1056338028169014,
+      "demographic_parity_difference": 0.07474208210085853,
+      "equalized_odds_difference": 0.1111111111111111,
+      "groups": {
+        "female": {
+          "approval_rate": 0.5180722891566265,
+          "good_outcome_tpr": 0.7358490566037735
+        },
+        "male_or_other": {
+          "approval_rate": 0.592814371257485,
+          "good_outcome_tpr": 0.7213114754098361
+        }
+      },
+      "overall_approval_rate": 0.568,
+      "threshold": 0.3
+    },
+    {
+      "approval_rate_ratio": 0.8675804133967061,
+      "approved_observed_default_rate": 0.1346153846153846,
+      "demographic_parity_difference": 0.08642955053747925,
+      "equalized_odds_difference": 0.1333333333333333,
+      "groups": {
+        "female": {
+          "approval_rate": 0.5662650602409639,
+          "good_outcome_tpr": 0.7735849056603774
+        },
+        "male_or_other": {
+          "approval_rate": 0.6526946107784432,
+          "good_outcome_tpr": 0.7704918032786885
+        }
+      },
+      "overall_approval_rate": 0.624,
+      "threshold": 0.35
+    }
+  ]
+}</pre>
+<small>Source: runs/audit/german_scorecard.json; evidence hash f9753a934bea3ee8b3f225b0638ef70bc2ee1f6e58e3916d46e66f587c8b156a</small></section><section><h3>EXPL-SHAP-01 — information</h3>
+<p>Objective: evaluate the EXPL-SHAP-01 registered diagnostic on the stated cohort.</p>
+<p>Procedure and threshold:</p><pre>null</pre>
+<p>Measured evidence:</p><pre>{
+  "dataset": "german",
+  "rows_explained": 100,
+  "scorecard_first_case_reason_codes": [
+    "A01",
+    "A08",
+    "A06"
+  ],
+  "scorecard_top3_overlap_under_1pct_amount_change": 1.0,
+  "warning": "SHAP is model explanation in log-odds space, not a causal reason or lawful adverse-action notice.",
+  "xgb_first_case_adverse_top3": [
+    {
+      "feature": "cat__A01_A14",
+      "shap_log_odds": 0.31417495012283325
+    },
+    {
+      "feature": "num__A05",
+      "shap_log_odds": 0.15592725574970245
+    },
+    {
+      "feature": "num__A08",
+      "shap_log_odds": 0.11538189649581909
+    }
+  ],
+  "xgb_shap_global_top10": [
+    {
+      "feature": "cat__A01_A14",
+      "mean_abs_shap": 0.4713290333747864
+    },
+    {
+      "feature": "num__A02",
+      "mean_abs_shap": 0.235748752951622
+    },
+    {
+      "feature": "cat__A03_A34",
+      "mean_abs_shap": 0.20800858736038208
+    },
+    {
+      "feature": "num__A05",
+      "mean_abs_shap": 0.19495922327041626
+    },
+    {
+      "feature": "cat__A01_A11",
+      "mean_abs_shap": 0.18921680748462677
+    },
+    {
+      "feature": "num__A08",
+      "mean_abs_shap": 0.1332424283027649
+    },
+    {
+      "feature": "num__A13",
+      "mean_abs_shap": 0.1268044263124466
+    },
+    {
+      "feature": "cat__A04_A40",
+      "mean_abs_shap": 0.11415299773216248
+    },
+    {
+      "feature": "cat__A07_A74",
+      "mean_abs_shap": 0.1027626022696495
+    },
+    {
+      "feature": "cat__A04_A41",
+      "mean_abs_shap": 0.10129211097955704
+    }
+  ]
+}</pre>
+<small>Source: runs/audit/german_scorecard.json; evidence hash f9753a934bea3ee8b3f225b0638ef70bc2ee1f6e58e3916d46e66f587c8b156a</small></section>
+</html>

@@ -1,0 +1,30 @@
+{
+  "dataset": "taiwan",
+  "provenance": {
+    "rows": 30000,
+    "sha256_zip": "56c885f84457f6680f8438f02bfcdac9579323d8a94465ee5f26e32baa727602",
+    "split_warning": "ID-order proxy cohorts; dataset has no true application timestamp"
+  },
+  "split_sizes": {
+    "train": 18000,
+    "validation": 6000,
+    "test": 6000
+  },
+  "test_default_rate": 0.211,
+  "test_metrics": {
+    "scorecard": {
+      "auc": 0.7836948570757338,
+      "brier": 0.1293283414401038,
+      "risk_mean": 0.21409074527737793
+    },
+    "xgb": {
+      "auc": 0.7908455754512915,
+      "brier": 0.12744802315090895,
+      "risk_mean": 0.21315430104732513
+    }
+  },
+  "models": {
+    "scorecard": "quantile/category WoE logistic with PDO points",
+    "xgb": "XGBClassifier, 100 trees, depth 3"
+  }
+}

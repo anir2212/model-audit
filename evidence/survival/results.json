@@ -1,0 +1,37 @@
+{
+  "dataset": "UCI Taiwan; retrospective April\u2013September payment statuses",
+  "people": 10000,
+  "person_month_rows": 50973,
+  "event_definition": "first recorded payment delay of at least two months",
+  "events": 2801,
+  "censored": 7199,
+  "cox_concordance_train": 0.6520831166192114,
+  "cox_hazard_ratios": {
+    "LIMIT_BAL": 0.7486072184023408,
+    "SEX": 0.9152345011329724,
+    "AGE": 0.9504288600537097,
+    "EDUCATION": 1.0427342693473656,
+    "MARRIAGE": 0.9900729352017101
+  },
+  "ph_test_p": {
+    "AGE": 0.8877453482639952,
+    "EDUCATION": 0.04681646040104071,
+    "LIMIT_BAL": 0.05282408133367339,
+    "MARRIAGE": 0.9230135173119021,
+    "SEX": 0.11013594798910528
+  },
+  "kaplan_meier": {
+    "limit_below_100k": {
+      "people": 3903,
+      "survival_at_3": 0.7494235203689473,
+      "survival_at_6": 0.5936459133999489
+    },
+    "limit_at_least_100k": {
+      "people": 6097,
+      "survival_at_3": 0.8807610300147616,
+      "survival_at_6": 0.8007216663933082
+    }
+  },
+  "discrete_hazard_train_auc": 0.7091065046785967,
+  "warning": "Exploratory in-sample survival fit; event is delinquency proxy, not observed default. PH checks are diagnostics, not proof. Static default label is a different endpoint and later features can leak into early-event prediction."
+}

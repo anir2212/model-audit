@@ -1,0 +1,8 @@
+# Framework references and use limits
+
+- [MAS FEAT Principles, official PDF](https://www.mas.gov.sg/-/media/MAS/News-and-Publications/Monographs-and-Information-Papers/FEAT-Principles-Updated-7-Feb-19.pdf): Singapore financial-sector principles for fairness, ethics, accountability and transparency. They are non-prescriptive principles for governance consideration; this project does not claim conformity.
+- [MAS Veritas fairness assessment methodology, official PDF](https://www.mas.gov.sg/-/media/mas/news/media-releases/2021/veritas-document-1-feat-fairness-principles-assessment-methodology.pdf): example methodology for assessing fairness in financial AI. The metrics and thresholds here are project-specific; they are not endorsed Veritas thresholds.
+- [Federal Reserve SR 26-2 (17 April 2026)](https://www.federalreserve.gov/supervisionreg/srletters/SR2602.htm) and [revised model risk guidance](https://www.federalreserve.gov/frrs/guidance/supervisory-guidance-on-model-risk-management.htm): current U.S. interagency guidance that **supersedes SR 11-7**. This project is an educational local audit, not a regulatory assessment.
+- [UCI Taiwan dataset](https://archive.ics.uci.edu/dataset/350/default) and [UCI German Credit dataset](https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data): source descriptions, citations and CC BY 4.0 license.
+
+A fairness gap, PSI flag, or monotonicity counterexample is a review signal under the YAML *local thresholds*. It is not, by itself, a legal discrimination, compliance, or safety finding. Interpreting such results requires intended use, demographic definitions, cost and harm analysis, and institutional review.
