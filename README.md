@@ -1,12 +1,18 @@
 # ModelAudit
 
-Reproducible model validation workpapers.
-
-A model-validation workflow that builds credit-score baselines, checks data and performance, and exports evidence-linked HTML/PDF workpapers. A local RAG fixture probes evidence and refusal behavior.
+ModelAudit helps a reviewer ask whether a credit-risk model is behaving as expected and trace each concern back to evidence. It trains a readable scorecard and an XGBoost comparison model on two licensed UCI datasets, applies a registered set of checks, and exports HTML/PDF workpapers. A separate fictional-policy fixture exercises the application-audit harness.
 
 ## Why this project
 
-A model score is hard to trust without a reproducible trail from source data to validation finding. This project turns that trail into workpapers that another reviewer can inspect, including where the evidence is thin.
+A strong overall score can hide calibration problems, unstable inputs or different outcomes across groups. This project makes the review tests explicit and keeps their thresholds, measured values and source limitations together. The flags invite investigation; they are not credit decisions or legal findings.
+
+## Current milestones
+
+| Area | What works today | Next question |
+|---|---|---|
+| Credit-model review | Hash-checked inputs, two models, registered checks, saved findings and workpapers | Do flags repeat in an authorized, timestamped cohort? |
+| Additional diagnostics | Retrospective repayment-status survival analysis and local evidence viewer | Which questions matter for a defined lending use case? |
+| Application harness | Authored bounded and deliberately unsafe fictional-policy cases | How would an independent, human-labeled live-LLM evaluation behave? |
 
 ## Run locally
 
@@ -20,7 +26,7 @@ make audit
 make test
 ```
 
-`make dashboard` opens the local Streamlit viewer. Dataset provenance and hashes are in [source notes](data/SOURCES.md); [results](RESULTS.md) distinguishes the measured validation cases.
+`make dashboard` opens the local, read-only Streamlit viewer after `make audit` has written its working files. Dataset provenance and hashes are in [source notes](data/SOURCES.md). The saved [results](RESULTS.md) include Taiwan scorecard/XGBoost AUCs of 0.7837/0.7908 and German AUCs of 0.8142/0.8032, with split and confirmation caveats. The fictional-policy measurements use deterministic authored cases; no live LLM was run.
 
 ## Repository map
 
@@ -28,4 +34,4 @@ make test
 
 ## Scope
 
-This is a validation exercise, not a lending decision system or a compliance certification. Check the source licenses before redistributing input archives.
+This is a validation exercise, not a lending decision system or a compliance certification. Taiwan ID order is a proxy split, not an application timeline; German confirmation reuses test rows. Raw source archives stay outside this repository. A real review needs authorized dated data, institution-approved thresholds and responsible domain/legal review.
