@@ -2,20 +2,20 @@
 <style>body{font:15px system-ui;max-width:960px;margin:2rem auto;color:#1d2633}h1,h2{color:#153d64}section{border-top:1px solid #bbc;padding:1rem 0}pre{white-space:pre-wrap;background:#f2f5f8;padding:1rem;overflow:auto}.fail{color:#a82020}.warn{color:#9b5c00}small{color:#52606b}</style>
 <h1>ModelAudit workpaper — taiwan_xgb</h1><p>research demonstration only; thresholds are local review heuristics</p><p>Dataset: taiwan · Model: xgb · Test cohort: 6000 rows</p>
 <p>Evidence SHA-256: <code>8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</code></p><p>Finding confirmation: disjoint ID-proxy validation cohort (previous 6,000 rows)</p>
-<h2>Findings</h2><section><strong class="high">STAB-CSI-01 · high</strong>
+<h2>Findings</h2><section id="finding-STAB-CSI-01"><strong class="high">STAB-CSI-01 · high</strong>
 <p>Observed 0.29407266523914694 · confirmation reproduced (0.2908467882806627)</p>
 <p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
-<p>Management response: ____________________</p></section><section><strong class="medium">FAIR-AGE-01 · medium</strong>
+<p>Management response: ____________________</p></section><section id="finding-FAIR-AGE-01"><strong class="medium">FAIR-AGE-01 · medium</strong>
 <p>Observed 0.05678505748564422 · confirmation not_reproduced (0.015525477707006352)</p>
 <p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
-<p>Management response: ____________________</p></section><section><strong class="high">ROB-MONO-01 · high</strong>
+<p>Management response: ____________________</p></section><section id="finding-ROB-MONO-01"><strong class="high">ROB-MONO-01 · high</strong>
 <p>Observed 64 · confirmation reproduced (49)</p>
 <p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
-<p>Management response: ____________________</p></section><section><strong class="high">DQ-CAT-01 · high</strong>
+<p>Management response: ____________________</p></section><section id="finding-DQ-CAT-01"><strong class="high">DQ-CAT-01 · high</strong>
 <p>Observed 103 · confirmation reproduced (107)</p>
 <p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
 <p>Management response: ____________________</p></section>
-<h2>Registered tests</h2><section><h3>PERF-AUC-01 — pass</h3>
+<h2>Registered tests</h2><section id="PERF-AUC-01"><h3>PERF-AUC-01 — pass</h3>
 <p>Objective: evaluate the PERF-AUC-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_below": 0.7,
@@ -32,7 +32,7 @@
   "gini": 0.581691150902583,
   "ks": 0.4469432581086302
 }</pre>
-<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section><h3>CAL-ECE-01 — pass</h3>
+<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section id="CAL-ECE-01"><h3>CAL-ECE-01 — pass</h3>
 <p>Objective: evaluate the CAL-ECE-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 0.05,
@@ -109,7 +109,7 @@
     }
   ]
 }</pre>
-<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section><h3>STAB-PSI-01 — pass</h3>
+<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section id="STAB-PSI-01"><h3>STAB-PSI-01 — pass</h3>
 <p>Objective: evaluate the STAB-PSI-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 0.25,
@@ -121,7 +121,7 @@
   "psi": 0.01343728427133399,
   "scenario": "limit -20% and age +5"
 }</pre>
-<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section><h3>STAB-CSI-01 — fail</h3>
+<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section id="STAB-CSI-01"><h3>STAB-CSI-01 — fail</h3>
 <p>Objective: evaluate the STAB-CSI-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 0.25,
@@ -133,7 +133,7 @@
   "feature": "LIMIT_BAL",
   "max_csi": 0.29407266523914694
 }</pre>
-<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section><h3>FAIR-SEX-01 — pass</h3>
+<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section id="FAIR-SEX-01"><h3>FAIR-SEX-01 — pass</h3>
 <p>Objective: evaluate the FAIR-SEX-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 0.1,
@@ -158,7 +158,7 @@
   "overall_approval_rate": 0.7653333333333333,
   "threshold": 0.25
 }</pre>
-<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section><h3>FAIR-AGE-01 — warn</h3>
+<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section id="FAIR-AGE-01"><h3>FAIR-AGE-01 — warn</h3>
 <p>Objective: evaluate the FAIR-AGE-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 0.1,
@@ -183,7 +183,7 @@
   "overall_approval_rate": 0.7653333333333333,
   "threshold": 0.25
 }</pre>
-<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section><h3>ROB-MONO-01 — fail</h3>
+<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section id="ROB-MONO-01"><h3>ROB-MONO-01 — fail</h3>
 <p>Objective: evaluate the ROB-MONO-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 1,
@@ -197,7 +197,7 @@
   "test_feature": "PAY_0 missed-payment months",
   "violations": 64
 }</pre>
-<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section><h3>DQ-CAT-01 — fail</h3>
+<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section id="DQ-CAT-01"><h3>DQ-CAT-01 — fail</h3>
 <p>Objective: evaluate the DQ-CAT-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 100,
@@ -212,7 +212,7 @@
   "null_cells": 0,
   "rows": 6000
 }</pre>
-<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section><h3>FAIR-TRADEOFF — information</h3>
+<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section id="FAIR-TRADEOFF"><h3>FAIR-TRADEOFF — information</h3>
 <p>Objective: evaluate the FAIR-TRADEOFF registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>null</pre>
 <p>Measured evidence:</p><pre>{
@@ -309,7 +309,7 @@
     }
   ]
 }</pre>
-<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section><h3>EXPL-SHAP-01 — information</h3>
+<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section id="EXPL-SHAP-01"><h3>EXPL-SHAP-01 — information</h3>
 <p>Objective: evaluate the EXPL-SHAP-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>null</pre>
 <p>Measured evidence:</p><pre>{
@@ -379,7 +379,7 @@
     }
   ]
 }</pre>
-<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section><h3>SURV-01 — information</h3>
+<small>Source: runs/audit/taiwan_xgb.json; evidence hash 8f4306268f09b6363563ecce7fc14e27685396ba0b259107b3a9051d75b0ecf3</small></section><section id="SURV-01"><h3>SURV-01 — information</h3>
 <p>Objective: evaluate the SURV-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>null</pre>
 <p>Measured evidence:</p><pre>{

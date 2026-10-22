@@ -12,6 +12,7 @@ A strong overall score can hide calibration problems, unstable inputs or differe
 |---|---|---|
 | Credit-model review | Hash-checked inputs, two models, registered checks, saved findings and workpapers | Do flags repeat in an authorized, timestamped cohort? |
 | Additional diagnostics | Retrospective repayment-status survival analysis and local evidence viewer | Which questions matter for a defined lending use case? |
+| Reviewer navigation | The local console verifies each audit bundle's hash, re-checks stored statuses against the current check plan, gives findings stable IDs and traces each one to its evidence keys and workpaper section | It is read-only, with no user accounts or reviewer sign-off |
 | Application harness | Authored bounded and deliberately unsafe fictional-policy cases | How would an independent, human-labeled live-LLM evaluation behave? |
 
 ## Run locally

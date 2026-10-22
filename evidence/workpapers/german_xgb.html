@@ -2,23 +2,23 @@
 <style>body{font:15px system-ui;max-width:960px;margin:2rem auto;color:#1d2633}h1,h2{color:#153d64}section{border-top:1px solid #bbc;padding:1rem 0}pre{white-space:pre-wrap;background:#f2f5f8;padding:1rem;overflow:auto}.fail{color:#a82020}.warn{color:#9b5c00}small{color:#52606b}</style>
 <h1>ModelAudit workpaper — german_xgb</h1><p>research demonstration only; thresholds are local review heuristics</p><p>Dataset: german · Model: xgb · Test cohort: 250 rows</p>
 <p>Evidence SHA-256: <code>f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</code></p><p>Finding confirmation: test subset; not an independent confirmation cohort</p>
-<h2>Findings</h2><section><strong class="medium">CAL-ECE-01 · medium</strong>
+<h2>Findings</h2><section id="finding-CAL-ECE-01"><strong class="medium">CAL-ECE-01 · medium</strong>
 <p>Observed 0.04220368146896362 · confirmation reproduced (0.06774532747268677)</p>
 <p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
-<p>Management response: ____________________</p></section><section><strong class="medium">STAB-CSI-01 · medium</strong>
+<p>Management response: ____________________</p></section><section id="finding-STAB-CSI-01"><strong class="medium">STAB-CSI-01 · medium</strong>
 <p>Observed 0.12116270428342113 · confirmation reproduced (0.18723423330094985)</p>
 <p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
-<p>Management response: ____________________</p></section><section><strong class="medium">FAIR-SEX-01 · medium</strong>
+<p>Management response: ____________________</p></section><section id="finding-FAIR-SEX-01"><strong class="medium">FAIR-SEX-01 · medium</strong>
 <p>Observed 0.06510980513455 · confirmation not_reproduced (0.02155172413793105)</p>
 <p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
-<p>Management response: ____________________</p></section><section><strong class="high">FAIR-AGE-01 · high</strong>
+<p>Management response: ____________________</p></section><section id="finding-FAIR-AGE-01"><strong class="high">FAIR-AGE-01 · high</strong>
 <p>Observed 0.1286549707602339 · confirmation reproduced (0.12749999999999995)</p>
 <p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
-<p>Management response: ____________________</p></section><section><strong class="high">ROB-MONO-01 · high</strong>
+<p>Management response: ____________________</p></section><section id="finding-ROB-MONO-01"><strong class="high">ROB-MONO-01 · high</strong>
 <p>Observed 5 · confirmation reproduced (1)</p>
 <p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
 <p>Management response: ____________________</p></section>
-<h2>Registered tests</h2><section><h3>PERF-AUC-01 — pass</h3>
+<h2>Registered tests</h2><section id="PERF-AUC-01"><h3>PERF-AUC-01 — pass</h3>
 <p>Objective: evaluate the PERF-AUC-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_below": 0.7,
@@ -35,7 +35,7 @@
   "gini": 0.6064,
   "ks": 0.4780952380952381
 }</pre>
-<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section><h3>CAL-ECE-01 — warn</h3>
+<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section id="CAL-ECE-01"><h3>CAL-ECE-01 — warn</h3>
 <p>Objective: evaluate the CAL-ECE-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 0.05,
@@ -112,7 +112,7 @@
     }
   ]
 }</pre>
-<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section><h3>STAB-PSI-01 — pass</h3>
+<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section id="STAB-PSI-01"><h3>STAB-PSI-01 — pass</h3>
 <p>Objective: evaluate the STAB-PSI-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 0.25,
@@ -124,7 +124,7 @@
   "psi": 0.08555588532453444,
   "scenario": "amount +25% and age +5"
 }</pre>
-<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section><h3>STAB-CSI-01 — warn</h3>
+<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section id="STAB-CSI-01"><h3>STAB-CSI-01 — warn</h3>
 <p>Objective: evaluate the STAB-CSI-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 0.25,
@@ -136,7 +136,7 @@
   "feature": "A05",
   "max_csi": 0.12116270428342113
 }</pre>
-<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section><h3>FAIR-SEX-01 — warn</h3>
+<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section id="FAIR-SEX-01"><h3>FAIR-SEX-01 — warn</h3>
 <p>Objective: evaluate the FAIR-SEX-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 0.1,
@@ -161,7 +161,7 @@
   "overall_approval_rate": 0.476,
   "threshold": 0.25
 }</pre>
-<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section><h3>FAIR-AGE-01 — fail</h3>
+<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section id="FAIR-AGE-01"><h3>FAIR-AGE-01 — fail</h3>
 <p>Objective: evaluate the FAIR-AGE-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 0.1,
@@ -186,7 +186,7 @@
   "overall_approval_rate": 0.476,
   "threshold": 0.25
 }</pre>
-<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section><h3>ROB-MONO-01 — fail</h3>
+<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section id="ROB-MONO-01"><h3>ROB-MONO-01 — fail</h3>
 <p>Objective: evaluate the ROB-MONO-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 1,
@@ -200,7 +200,7 @@
   "test_feature": "A02 loan duration months (stress proxy)",
   "violations": 5
 }</pre>
-<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section><h3>DQ-CAT-01 — pass</h3>
+<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section id="DQ-CAT-01"><h3>DQ-CAT-01 — pass</h3>
 <p>Objective: evaluate the DQ-CAT-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{
   "fail_above": 100,
@@ -215,7 +215,7 @@
   "null_cells": 0,
   "rows": 250
 }</pre>
-<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section><h3>FAIR-TRADEOFF — information</h3>
+<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section id="FAIR-TRADEOFF"><h3>FAIR-TRADEOFF — information</h3>
 <p>Objective: evaluate the FAIR-TRADEOFF registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>null</pre>
 <p>Measured evidence:</p><pre>{
@@ -312,7 +312,7 @@
     }
   ]
 }</pre>
-<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section><h3>EXPL-SHAP-01 — information</h3>
+<small>Source: runs/audit/german_xgb.json; evidence hash f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792</small></section><section id="EXPL-SHAP-01"><h3>EXPL-SHAP-01 — information</h3>
 <p>Objective: evaluate the EXPL-SHAP-01 registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>null</pre>
 <p>Measured evidence:</p><pre>{

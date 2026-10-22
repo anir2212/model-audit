@@ -18,11 +18,11 @@ TEMPLATE = """<!doctype html><html lang="en"><meta charset="utf-8"><title>{{ tit
 <style>body{font:15px system-ui;max-width:960px;margin:2rem auto;color:#1d2633}h1,h2{color:#153d64}section{border-top:1px solid #bbc;padding:1rem 0}pre{white-space:pre-wrap;background:#f2f5f8;padding:1rem;overflow:auto}.fail{color:#a82020}.warn{color:#9b5c00}small{color:#52606b}</style>
 <h1>{{ title }}</h1><p>{{ scope }}</p><p>Dataset: {{ dataset }} · Model: {{ model }} · Test cohort: {{ count }} rows</p>
 <p>Evidence SHA-256: <code>{{ digest }}</code></p><p>Finding confirmation: {{ confirmation }}</p>
-<h2>Findings</h2>{% for item in findings %}<section><strong class="{{ item.severity }}">{{ item.test_id }} · {{ item.severity }}</strong>
+<h2>Findings</h2>{% for item in findings %}<section id="finding-{{ item.test_id }}"><strong class="{{ item.severity }}">{{ item.test_id }} · {{ item.severity }}</strong>
 <p>Observed {{ item.observed }} · confirmation {{ item.confirmation }} ({{ item.confirmation_value }})</p>
 <p>Recommendation: investigate this local review flag and assess materiality, data and threshold choice with a domain owner.</p>
 <p>Management response: ____________________</p></section>{% endfor %}
-<h2>Registered tests</h2>{% for id, test in tests.items() %}<section><h3>{{ id }} — {{ test.status }}</h3>
+<h2>Registered tests</h2>{% for id, test in tests.items() %}<section id="{{ id }}"><h3>{{ id }} — {{ test.status }}</h3>
 <p>Objective: evaluate the {{ id }} registered diagnostic on the stated cohort.</p>
 <p>Procedure and threshold:</p><pre>{{ test['threshold'] | tojson(indent=2) }}</pre>
 <p>Measured evidence:</p><pre>{{ test['values'] | tojson(indent=2) }}</pre>
