@@ -32,3 +32,20 @@ The bounded deterministic RAG fixture passed **12/12** authored fact answers, **
 `make audit` completed end-to-end; `make test` passed **10 tests** at that time; the Streamlit AppTest rendered the four-tab console without an exception. Four credit and two fictional-policy HTML/PDF workpaper pairs were generated. Each credit evidence bundle has a SHA-256 digest over its canonical measured content and every registered finding cites a test ID. The optional local Ollama prose drafter was not run; its guard test rejects a fabricated numeric value. **Reviewer navigation, 20 October 2026.** No metric changed. The console now recomputes each bundle's SHA-256 before display; all four committed credit bundles match. It re-applies the current audit plan to the saved values and finds no stale status for any of them. Findings have stable IDs and trace to their evidence key and workpaper anchor. Tests now total **26** (`make test`), including AppTests for the trace panel, a changed-plan stale warning and refusal of edited bundles. The workpaper HTML gained anchors only. This is local reviewer tooling; it is not independent validation, and no new cohort was scored.
 
 A live LLM evaluation, true timestamped out-of-time cohort, institution-approved policy/cost thresholds, legal fairness review, external validation, and production monitoring are open.
+
+## Reviewer sign-off and view-time file rechecks — 23 October 2026
+
+No model was retrained, no audit was rerun and no metric above changed. The four credit bundles, workpapers and audit plan are byte-identical to the 20 October commit. No independent dated cohort was available, so this run built the handoff's fallback: a reviewer sign-off record and a source-archive recheck at view time. No real sign-off was recorded; every sign-off used below is an example written to a temporary folder.
+
+| Check | Command | Result |
+|---|---|---|
+| Unit and AppTest suite, before | `make test` | **26/26** passed |
+| Unit and AppTest suite, after | `make test` | **62/62** passed (36 new: 7 integrity, 22 sign-off, 7 console AppTests; the first AppTest now expects five tabs) |
+| Real console in headless Chrome | `make browser-check` | **37/37** checks passed over 6 scenarios |
+| Committed bundles against fetched archives | `tests/test_integrity.py` | Taiwan and German ZIPs recheck as **match** with the recorded and pinned hashes |
+
+The browser check starts `streamlit run` once per scenario on a loopback port, loads the page through the Chrome DevTools Protocol, reads the visible text, opens the "Integrity and sign-off" tab and saves a screenshot. The scenarios are: real source ZIP with no sign-off (match), replaced ZIP (mismatch), empty raw folder (missing), one current and one stale-bundle example sign-off, an example sign-off with a replaced ZIP (`stale_source`), and an example log with an edited line (`log_integrity_failed`). Each scenario also checks that no Streamlit exception appeared. All six used the `german_scorecard` bundle, the first in the selector. Evidence: `evidence/browser/console_check_2026-10-23.json` and `evidence/browser/source_mismatch_with_signoff_2026-10-23.png`; the other screenshots are in ignored `runs/browser/`. Environment: Apple M3 Pro, macOS 15.3.1, Python 3.12 virtual environment, Streamlit 1.50.0, Chrome 156.0.8078.47. The suite took about 2–3 s and the browser check about 11 s.
+
+Limits: the sign-off log is a local file with a SHA-256 hash chain. The chain shows an edited, reordered or deleted earlier line. It does not show removal of the newest lines, and it is not a signature or access control: anyone who can write the file can rewrite it consistently. Source rechecks prove only that the ZIP on disk equals the hash recorded when the bundle was built. They do not re-derive the model results from it.
+
+A live LLM evaluation, true timestamped out-of-time cohort, institution-approved policy/cost thresholds, legal fairness review, external validation, an actual named reviewer's decision, access control and production monitoring are still open.
