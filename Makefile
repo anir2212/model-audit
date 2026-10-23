@@ -2,7 +2,7 @@ PYTHON ?= .venv/bin/python
 export MPLCONFIGDIR := $(CURDIR)/.mplconfig
 export OPENBLAS_NUM_THREADS := 2
 export OMP_NUM_THREADS := 2
-.PHONY: data models survival explain testsuite llm workpapers audit test app-test dashboard
+.PHONY: data models survival explain testsuite llm workpapers audit test app-test browser-check dashboard
 
 data:
 	$(PYTHON) -m data.fetch
@@ -24,5 +24,7 @@ test:
 	$(PYTHON) -m pytest -q
 app-test:
 	$(PYTHON) -m pytest -q tests/test_app.py
+browser-check:
+	$(PYTHON) scripts/browser_check.py
 dashboard:
 	.venv/bin/streamlit run app/streamlit_app.py --server.address 127.0.0.1 --browser.gatherUsageStats false

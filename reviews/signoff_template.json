@@ -1,0 +1,18 @@
+{
+  "_note": "Empty template. Real sign-offs are appended to reviews/signoffs.jsonl (ignored by Git) with `python -m audit.signoff sign`. Do not copy this file into the log by hand; the command adds the sequence, hashes and chain fields.",
+  "schema": "modelaudit-signoff/1",
+  "sequence": null,
+  "bundle": "",
+  "bundle_sha256": "",
+  "workpaper_sha256": {"html": "", "pdf": ""},
+  "audit_plan_sha256": "",
+  "source_archive_sha256": "",
+  "owner": "",
+  "role": "",
+  "decision": "",
+  "conditions": [],
+  "date": "",
+  "recorded_at": "",
+  "prev_record_sha256": "",
+  "record_sha256": ""
+}

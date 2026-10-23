@@ -1,8 +1,7 @@
-"""Local, read-only browser for measured ModelAudit evidence."""
+"""Local, read-only browser for measured ModelAudit evidence, file rechecks and sign-offs."""
 from __future__ import annotations
 
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -12,11 +11,14 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+from audit import paths  # noqa: E402
+from audit.integrity import sha256_file, source_archive_check, workpaper_checks  # noqa: E402
 from audit.registry import load_plan  # noqa: E402
 from audit.review import confirmation_scope, current_findings, reevaluate, trace, verify_digest  # noqa: E402
+from audit.signoff import assess, read_log  # noqa: E402
 
-AUDIT = Path(os.environ.get("MODELAUDIT_AUDIT_DIR", ROOT / "runs/audit"))
-PLAN = Path(os.environ.get("MODELAUDIT_PLAN", ROOT / "configs/audit_plan.yaml"))
+WHERE = paths.resolve()
+AUDIT, PLAN = WHERE["audit"], WHERE["plan"]
 
 st.set_page_config(page_title="ModelAudit local console", layout="wide")
 st.title("ModelAudit")
@@ -37,6 +39,13 @@ plan = load_plan(PLAN)
 drift = [row for row in reevaluate(bundle, plan) if row["stale"]]
 live_findings = current_findings(bundle, plan)
 scope = confirmation_scope(bundle)
+# Rechecked on every page load, not cached: the point is the state of the files right now.
+source_check = source_archive_check(bundle, WHERE["raw"])
+paper_checks = workpaper_checks(WHERE["workpapers"], name)
+workpaper = {row["label"].split()[-1].lower(): row["actual"] for row in paper_checks}
+records, chain_break, chain_problem = read_log(WHERE["signoff_log"])
+signoffs = assess(records, chain_break, name, bundle["sha256"], workpaper, sha256_file(PLAN),
+                  source_check["actual"])
 
 left, middle, right = st.columns(3)
 left.metric("Test cohort rows", bundle["test_cohort_rows"])
@@ -44,6 +53,30 @@ middle.metric("Registered tests", len(bundle["tests"]))
 right.metric("Findings", len(bundle["findings"]))
 st.caption(f"Evidence SHA-256: {bundle['sha256']} (recomputed and matched)")
 st.info(bundle["provenance"]["split_warning"])
+archive = Path(source_check["path"]).name
+if source_check["status"] == "match":
+    st.success(f"Source archive recheck: {archive} was hashed now and matches the bundle's recorded "
+               "SHA-256.")
+elif source_check["status"] == "missing":
+    st.warning(f"Source archive missing: {archive} is not in {WHERE['raw']}, so it cannot be "
+               "rechecked. Run `make data` to fetch and verify it.")
+else:
+    st.error(f"Source archive mismatch: {archive} now hashes to {source_check['actual'][:16]}…, but the "
+             f"bundle recorded {str(source_check['expected'])[:16]}…. These results may not describe "
+             "the file on disk.")
+if not source_check["recorded_equals_pin"]:
+    st.error("The bundle's recorded source hash differs from the pinned hash in data/fetch.py.")
+if chain_problem:
+    st.error(f"Sign-off log integrity failure: {chain_problem}. Affected records are flagged in the Integrity and sign-off tab.")
+if signoffs["effective"]:
+    current = signoffs["effective"]
+    st.info(f"Current sign-off: {current['decision']} by {current['owner']} ({current['role']}) "
+            f"on {current['date']}." + (f" Note: {current['notes']}." if current["notes"] else ""))
+elif signoffs["rows"]:
+    st.warning("No sign-off matches this bundle, workpaper and source archive as they are now; earlier sign-offs "
+               "are stale. See the Integrity and sign-off tab.")
+else:
+    st.info("Sign-off: none recorded for this bundle.")
 if drift:
     st.warning(f"The audit plan at {PLAN.name} differs from the one used for this bundle. "
                f"{len(drift)} test status(es) are stale: "
@@ -51,7 +84,8 @@ if drift:
                            f"({row['reason']})" for row in drift)
                + ". Rerun `make audit` before relying on a status.")
 
-findings, tests, charts, provenance = st.tabs(["Findings", "Tests", "Calibration and fairness", "Provenance"])
+findings, tests, charts, provenance, review = st.tabs(
+    ["Findings", "Tests", "Calibration and fairness", "Provenance", "Integrity and sign-off"])
 with findings:
     st.warning(f"Confirmation limit: {scope['label']}")
     if live_findings:
@@ -103,3 +137,38 @@ with provenance:
     st.write(f"Confirmation source: {bundle['confirmation_source']}")
     st.write(f"Confirmation limit: {scope['label']}")
     st.write(f"Workpaper: runs/workpapers/{name}.html and .pdf")
+with review:
+    st.subheader("Files rechecked when this page loaded")
+    checks = [{"label": "evidence bundle (canonical digest)", "path": str(source),
+               "status": "match", "expected": bundle["sha256"], "actual": bundle["sha256"],
+               "detail": "recomputed digest equals the stored digest"}, source_check]
+    reference = signoffs["effective"] or next(
+        (row for row in signoffs["rows"] if row.get("bundle") == name), None)
+    for row in paper_checks:
+        row = dict(row)
+        if row["status"] == "unrecorded" and reference:
+            row["expected"] = (reference.get("workpaper_sha256") or {}).get(row["label"].split()[-1].lower())
+            row["status"] = "match" if row["expected"] == row["actual"] else "mismatch"
+            row["detail"] = f"compared with sign-off #{reference['sequence']} for this bundle"
+        elif row["status"] == "unrecorded":
+            row["detail"] = "no sign-off yet, so there is no recorded workpaper hash to compare"
+        checks.append(row)
+    st.dataframe(pd.DataFrame(checks)[["label", "status", "path", "expected", "actual", "detail"]],
+                 width="stretch", hide_index=True)
+    st.markdown(f"To sign, quote bundle SHA-256 `{bundle['sha256']}` and workpaper HTML SHA-256 "
+                f"`{workpaper.get('html')}`.")
+    st.subheader("Reviewer sign-offs")
+    st.caption(f"Append-only log outside the hashed bundle: {WHERE['signoff_log']}. "
+               "Records are added with `python -m audit.signoff sign`; this page does not write them.")
+    if signoffs["rows"]:
+        table = pd.DataFrame(signoffs["rows"]).reindex(columns=[
+            "sequence", "status", "decision", "owner", "role", "date", "conditions", "reason",
+            "notes", "bundle_sha256"])
+        table["conditions"] = table["conditions"].map(lambda c: "; ".join(c) if isinstance(c, list) else "")
+        st.dataframe(table, width="stretch", hide_index=True)
+        stale = [row for row in signoffs["rows"] if row["status"] != "current"]
+        if stale:
+            st.warning(f"{len(stale)} sign-off(s) do not apply to this bundle as it is now: "
+                       + "; ".join(f"record {row['line_index'] + 1} {row['status']}" for row in stale))
+    else:
+        st.write("No sign-off has been recorded for this bundle. The decision is open.")

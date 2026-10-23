@@ -1,0 +1,194 @@
+{
+  "date": "2026-10-23",
+  "browser": "Chrome/156.0.8078.47",
+  "streamlit": "1.50.0",
+  "passed": 37,
+  "total": 37,
+  "note": "Sign-off records in these scenarios are examples written to a temporary folder.",
+  "scenarios": [
+    {
+      "scenario": "source_match_no_signoff",
+      "bundle": "german_scorecard",
+      "checks": [
+        {
+          "check": "page shows 'ModelAudit'",
+          "passed": true
+        },
+        {
+          "check": "page shows 'uci_german_144.zip was hashed now and matches'",
+          "passed": true
+        },
+        {
+          "check": "page shows 'Sign-off: none recorded'",
+          "passed": true
+        },
+        {
+          "check": "no Streamlit exception on load",
+          "passed": true
+        },
+        {
+          "check": "tab 'Integrity and sign-off' opens",
+          "passed": true
+        },
+        {
+          "check": "open tab shows 'Files rechecked when this page loaded'",
+          "passed": true
+        },
+        {
+          "check": "open tab shows 'No sign-off has been recorded for this bundle'",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scenario": "source_mismatch",
+      "bundle": "german_scorecard",
+      "checks": [
+        {
+          "check": "page shows 'ModelAudit'",
+          "passed": true
+        },
+        {
+          "check": "page shows 'Source archive mismatch: uci_german_144.zip'",
+          "passed": true
+        },
+        {
+          "check": "no Streamlit exception on load",
+          "passed": true
+        },
+        {
+          "check": "tab 'Integrity and sign-off' opens",
+          "passed": true
+        },
+        {
+          "check": "open tab shows 'Files rechecked when this page loaded'",
+          "passed": true
+        },
+        {
+          "check": "open tab shows 'To sign, quote bundle SHA-256'",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scenario": "source_missing",
+      "bundle": "german_scorecard",
+      "checks": [
+        {
+          "check": "page shows 'ModelAudit'",
+          "passed": true
+        },
+        {
+          "check": "page shows 'Source archive missing: uci_german_144.zip'",
+          "passed": true
+        },
+        {
+          "check": "no Streamlit exception on load",
+          "passed": true
+        },
+        {
+          "check": "tab 'Integrity and sign-off' opens",
+          "passed": true
+        },
+        {
+          "check": "open tab shows 'Files rechecked when this page loaded'",
+          "passed": true
+        },
+        {
+          "check": "open tab shows 'No sign-off has been recorded'",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scenario": "example_signoffs_current_and_stale",
+      "bundle": "german_scorecard",
+      "checks": [
+        {
+          "check": "page shows 'ModelAudit'",
+          "passed": true
+        },
+        {
+          "check": "page shows 'Current sign-off: approve_with_conditions by EXAMPLE ONLY'",
+          "passed": true
+        },
+        {
+          "check": "page shows 'source archive missing, so it was not rechecked'",
+          "passed": true
+        },
+        {
+          "check": "no Streamlit exception on load",
+          "passed": true
+        },
+        {
+          "check": "tab 'Integrity and sign-off' opens",
+          "passed": true
+        },
+        {
+          "check": "open tab shows 'Reviewer sign-offs'",
+          "passed": true
+        },
+        {
+          "check": "open tab shows 'record 1 stale_bundle'",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scenario": "source_mismatch_with_signoff",
+      "bundle": "german_scorecard",
+      "checks": [
+        {
+          "check": "page shows 'ModelAudit'",
+          "passed": true
+        },
+        {
+          "check": "page shows 'Source archive mismatch: uci_german_144.zip'",
+          "passed": true
+        },
+        {
+          "check": "page shows 'earlier sign-offs are stale'",
+          "passed": true
+        },
+        {
+          "check": "no Streamlit exception on load",
+          "passed": true
+        },
+        {
+          "check": "tab 'Integrity and sign-off' opens",
+          "passed": true
+        },
+        {
+          "check": "open tab shows 'record 1 stale_source'",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "scenario": "edited_signoff_log",
+      "bundle": "german_scorecard",
+      "checks": [
+        {
+          "check": "page shows 'ModelAudit'",
+          "passed": true
+        },
+        {
+          "check": "page shows 'Sign-off log integrity failure'",
+          "passed": true
+        },
+        {
+          "check": "no Streamlit exception on load",
+          "passed": true
+        },
+        {
+          "check": "tab 'Integrity and sign-off' opens",
+          "passed": true
+        },
+        {
+          "check": "open tab shows 'record 1 log_integrity_failed'",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

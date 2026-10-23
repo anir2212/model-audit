@@ -1,6 +1,6 @@
 # Data sources and provenance
 
-Both archives were downloaded on 12 October 2026 from the official [UCI Default of Credit Card Clients](https://archive.ics.uci.edu/dataset/350/default) and [UCI Statlog German Credit](https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data) pages. Both pages state **CC BY 4.0**; credit the named creators and the UCI repository when reusing them. The files are excluded from Git. `python -m data.fetch` downloads missing archives and verifies the SHA-256 digests below before modeling.
+Both archives were downloaded on 12 October 2026 from the official [UCI Default of Credit Card Clients](https://archive.ics.uci.edu/dataset/350/default) and [UCI Statlog German Credit](https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data) pages. Both pages state **CC BY 4.0**; credit the named creators and the UCI repository when reusing them. The files are excluded from Git. `python -m data.fetch` downloads missing archives and verifies the SHA-256 digests below before modeling. The review console hashes the archive again each time a bundle is opened and shows a mismatch or missing file.
 
 | Archive | Creator and UCI citation | SHA-256 |
 |---|---|---|
