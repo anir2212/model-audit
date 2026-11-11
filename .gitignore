@@ -5,3 +5,12 @@
 /runs/
 /.mplconfig/
 /reviews/signoffs.jsonl
+/reviews/reviewer_keys.json
+/reviews/*anchor*.json
+# Private keys must never enter this repository (see scripts/check_no_committed_keys.py).
+*.pem
+*.key
+*.p8
+*_private*
+*private_key*
+*private-key*

@@ -56,6 +56,13 @@ class SignoffCase:
         return request
 
 
+@pytest.fixture(autouse=True)
+def no_real_reviewer_keys(tmp_path, monkeypatch):
+    """Keep every test away from a real allowlist and from the signature requirement."""
+    monkeypatch.setenv("MODELAUDIT_REVIEWER_KEYS", str(tmp_path / "no_reviewer_keys.json"))
+    monkeypatch.delenv("MODELAUDIT_REQUIRE_SIGNATURE", raising=False)
+
+
 @pytest.fixture
 def signoff_case(tmp_path):
     return SignoffCase(tmp_path)

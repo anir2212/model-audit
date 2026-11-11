@@ -6,17 +6,20 @@ import pytest
 import yaml
 from streamlit.testing.v1 import AppTest
 
-from audit.signoff import append_signoff
+from audit.reviewer_signature import (add_key, generate_key_file, load_allowlist, load_private_key,
+                                      public_key_text)
+from audit.signoff import _record_hash, anchor_snapshot, append_signoff, read_log
 from conftest import EXAMPLE_OWNER, TODAY, SignoffCase, redigest
 
 ROOT = Path(__file__).resolve().parents[1]
 APP = str(ROOT / 'app/streamlit_app.py')
 
 
-def _run(monkeypatch, audit_dir=None, plan=None, raw=None, workpapers=None, log=None):
+def _run(monkeypatch, audit_dir=None, plan=None, raw=None, workpapers=None, log=None, anchor=None):
     for variable, value in (('MODELAUDIT_AUDIT_DIR', audit_dir), ('MODELAUDIT_PLAN', plan),
                             ('MODELAUDIT_RAW_DIR', raw), ('MODELAUDIT_WORKPAPER_DIR', workpapers),
-                            ('MODELAUDIT_SIGNOFF_LOG', log)):
+                            ('MODELAUDIT_SIGNOFF_LOG', log),
+                            ('MODELAUDIT_SIGNOFF_ANCHOR', anchor)):
         if value:
             monkeypatch.setenv(variable, str(value))
     return AppTest.from_file(APP, default_timeout=30).run()
@@ -159,3 +162,117 @@ def test_replaced_source_archive_makes_signoff_stale(monkeypatch, tmp_path):
     app = _german(_run(monkeypatch, case.audit, raw=raw, workpapers=case.workpapers, log=case.log))
     assert any('Source archive mismatch' in e.value for e in app.error)
     assert list(_signoff_table(app)['status']) == ['stale_source']
+
+
+def test_console_withholds_signoff_after_anchor_truncation(monkeypatch, tmp_path):
+    case = SignoffCase(tmp_path)
+    first = append_signoff(case.log, case.request(), case.bundle, case.plan, case.plan_sha,
+                           case.workpaper(), case.source_match, today=TODAY)
+    append_signoff(case.log, case.request(decision='reject', conditions=[]), case.bundle,
+                   case.plan, case.plan_sha, case.workpaper(), case.source_match, today=TODAY)
+    records, broken, _ = read_log(case.log)
+    anchor = tmp_path / 'anchor.json'
+    anchor.write_text(json.dumps(anchor_snapshot(records, broken)))
+    case.log.write_text(json.dumps(first) + '\n')
+    app = _german(_run(monkeypatch, case.audit, workpapers=case.workpapers,
+                       log=case.log, anchor=anchor))
+    assert not app.exception
+    assert any('Separate sign-off anchor truncated' in e.value for e in app.error)
+    assert any('Sign-off status withheld' in w.value for w in app.warning)
+    assert not any('Current sign-off:' in i.value for i in app.info)
+
+
+ROLE = 'Example validator (test only)'
+
+
+def _keyed_case(tmp_path):
+    """An EXAMPLE key in a temporary folder, listed in a temporary allowlist."""
+    case = SignoffCase(tmp_path)
+    public = generate_key_file(tmp_path / 'example.pem', ROOT)
+    keys = tmp_path / 'keys.json'
+    add_key(keys, 'example-key', public_key_text(public), EXAMPLE_OWNER, ROLE)
+    return case, keys
+
+
+def _sign(case, keys, tmp_path, **request):
+    signer = {'key_id': 'example-key', 'private_key': load_private_key(tmp_path / 'example.pem', ROOT),
+              'allowlist': load_allowlist(keys)}
+    return append_signoff(case.log, case.request(**request), case.bundle, case.plan, case.plan_sha,
+                          case.workpaper(), case.source_match, today=TODAY, signer=signer)
+
+
+def _unsigned(case):
+    return append_signoff(case.log, case.request(), case.bundle, case.plan, case.plan_sha,
+                          case.workpaper(), case.source_match, today=TODAY)
+
+
+def _console(monkeypatch, case, keys=None, require=False):
+    if keys:
+        monkeypatch.setenv('MODELAUDIT_REVIEWER_KEYS', str(keys))
+    if require:
+        monkeypatch.setenv('MODELAUDIT_REQUIRE_SIGNATURE', '1')
+    return _german(_run(monkeypatch, case.audit, workpapers=case.workpapers, log=case.log))
+
+
+def test_console_shows_valid_signature_separately_and_states_its_limit(monkeypatch, tmp_path):
+    case, keys = _keyed_case(tmp_path)
+    _sign(case, keys, tmp_path)
+    app = _console(monkeypatch, case, keys)
+    banner = next(i.value for i in app.info if 'Current sign-off:' in i.value)
+    assert 'Signature valid (key example-key)' in banner and 'does not prove who holds the key' in banner
+    table = _signoff_table(app)
+    assert list(table['status']) == ['current'] and list(table['signature_status']) == ['valid']
+    assert list(table['signature_key_id']) == ['example-key']
+    assert any('Reviewer signatures: optional' in m.value for m in app.markdown)
+    assert any('institutional authority' in c.value for c in app.caption)
+
+
+def test_console_labels_unsigned_record_as_typed_text_and_keeps_default_decision(monkeypatch, tmp_path):
+    case, keys = _keyed_case(tmp_path)
+    _unsigned(case)
+    app = _console(monkeypatch, case, keys)
+    banner = next(i.value for i in app.info if 'Current sign-off:' in i.value)
+    assert 'Unsigned: the reviewer name is unverified typed text.' in banner
+    assert 'Signature valid' not in banner and not app.error
+    assert list(_signoff_table(app)['signature_status']) == ['unsigned']
+
+
+def test_console_flags_bad_signature_by_default_and_withholds_when_required(monkeypatch, tmp_path):
+    case, keys = _keyed_case(tmp_path)
+    record = _sign(case, keys, tmp_path)
+    record['decision'] = 'approve'
+    record['conditions'] = []
+    record.pop('record_sha256')
+    record['record_sha256'] = _record_hash(record)
+    case.log.write_text(json.dumps(record, sort_keys=True) + '\n')
+    app = _console(monkeypatch, case, keys)
+    assert any('Current sign-off: approve' in e.value and 'Signature bad_signature' in e.value for e in app.error)
+    assert any('record 1 bad_signature' in e.value for e in app.error)
+    table = _signoff_table(app)
+    assert list(table['status']) == ['current'] and list(table['signature_status']) == ['bad_signature']
+    app = _console(monkeypatch, case, keys, require=True)
+    assert any('Sign-off status withheld because signatures are required and record 1 is bad_signature'
+               in w.value for w in app.warning)
+    assert not any('Current sign-off:' in text.value for text in [*app.info, *app.warning, *app.error])
+    assert any('Reviewer signatures: required' in m.value for m in app.markdown)
+
+
+def test_console_requirement_withholds_unsigned_and_accepts_valid(monkeypatch, tmp_path):
+    case, keys = _keyed_case(tmp_path)
+    _unsigned(case)
+    app = _console(monkeypatch, case, keys, require=True)
+    assert any('record 1 is unsigned' in w.value for w in app.warning)
+    assert not any('Current sign-off:' in i.value for i in app.info)
+    _sign(case, keys, tmp_path)
+    app = _console(monkeypatch, case, keys, require=True)
+    assert any('Current sign-off:' in i.value and 'Signature valid' in i.value for i in app.info)
+    assert list(_signoff_table(app)['signature_status']) == ['valid', 'unsigned']
+
+
+def test_console_reports_invalid_allowlist(monkeypatch, tmp_path):
+    case, keys = _keyed_case(tmp_path)
+    _sign(case, keys, tmp_path)
+    keys.write_text('{not json')
+    app = _console(monkeypatch, case, keys)
+    assert any('Reviewer key allowlist is invalid' in e.value for e in app.error)
+    assert list(_signoff_table(app)['signature_status']) == ['allowlist_invalid']

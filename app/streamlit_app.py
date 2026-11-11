@@ -15,7 +15,8 @@ from audit import paths  # noqa: E402
 from audit.integrity import sha256_file, source_archive_check, workpaper_checks  # noqa: E402
 from audit.registry import load_plan  # noqa: E402
 from audit.review import confirmation_scope, current_findings, reevaluate, trace, verify_digest  # noqa: E402
-from audit.signoff import assess, read_log  # noqa: E402
+from audit.reviewer_signature import UNSIGNED, VALID, load_allowlist, signature_summary  # noqa: E402
+from audit.signoff import assess, check_anchor, read_log, withheld_reason  # noqa: E402
 
 WHERE = paths.resolve()
 AUDIT, PLAN = WHERE["audit"], WHERE["plan"]
@@ -44,8 +45,12 @@ source_check = source_archive_check(bundle, WHERE["raw"])
 paper_checks = workpaper_checks(WHERE["workpapers"], name)
 workpaper = {row["label"].split()[-1].lower(): row["actual"] for row in paper_checks}
 records, chain_break, chain_problem = read_log(WHERE["signoff_log"])
+anchor_check = check_anchor(records, chain_break, WHERE.get("signoff_anchor"))
+allowlist = load_allowlist(WHERE["reviewer_keys"])
+signature_required = paths.require_signature()
 signoffs = assess(records, chain_break, name, bundle["sha256"], workpaper, sha256_file(PLAN),
-                  source_check["actual"])
+                  source_check["actual"], allowlist)
+withheld = withheld_reason(signoffs, anchor_check, signature_required)
 
 left, middle, right = st.columns(3)
 left.metric("Test cohort rows", bundle["test_cohort_rows"])
@@ -68,10 +73,32 @@ if not source_check["recorded_equals_pin"]:
     st.error("The bundle's recorded source hash differs from the pinned hash in data/fetch.py.")
 if chain_problem:
     st.error(f"Sign-off log integrity failure: {chain_problem}. Affected records are flagged in the Integrity and sign-off tab.")
-if signoffs["effective"]:
+if anchor_check["status"] == "match":
+    st.success(f"Separate sign-off anchor matches through record {anchor_check['anchored_records']}.")
+elif anchor_check["status"] == "behind":
+    st.warning(f"Separate sign-off anchor covers {anchor_check['anchored_records']} records; "
+               f"{anchor_check['observed_records'] - anchor_check['anchored_records']} newer record(s) are unanchored.")
+elif anchor_check["status"] == "unconfigured":
+    st.info("No separate sign-off anchor is configured. Removal of the newest log records cannot be detected.")
+else:
+    st.error(f"Separate sign-off anchor {anchor_check['status']}: {anchor_check['detail']}. "
+             "Do not rely on a sign-off until the log and anchor are reconciled.")
+if allowlist["status"] == "invalid":
+    st.error(f"Reviewer key allowlist is invalid: {allowlist['detail']}. No signature can be accepted.")
+if withheld:
+    st.warning(f"Sign-off status withheld because {withheld}.")
+elif signoffs["effective"]:
     current = signoffs["effective"]
-    st.info(f"Current sign-off: {current['decision']} by {current['owner']} ({current['role']}) "
-            f"on {current['date']}." + (f" Note: {current['notes']}." if current["notes"] else ""))
+    message = (f"Current sign-off: {current['decision']} by {current['owner']} ({current['role']}) "
+               f"on {current['date']}." + (f" Note: {current['notes']}." if current["notes"] else "")
+               + " " + signature_summary(current))
+    if current["signature_status"] not in {VALID, UNSIGNED}:
+        st.error(message)
+    elif (anchor_check["status"] == "behind"
+            and current["sequence"] > anchor_check["anchored_records"]):
+        st.warning(message + " This decision is newer than the separate anchor.")
+    else:
+        st.info(message)
 elif signoffs["rows"]:
     st.warning("No sign-off matches this bundle, workpaper and source archive as they are now; earlier sign-offs "
                "are stale. See the Integrity and sign-off tab.")
@@ -139,6 +166,7 @@ with provenance:
     st.write(f"Workpaper: runs/workpapers/{name}.html and .pdf")
 with review:
     st.subheader("Files rechecked when this page loaded")
+    st.write(f"Separate sign-off anchor: {anchor_check['status']} — {anchor_check['detail']}.")
     checks = [{"label": "evidence bundle (canonical digest)", "path": str(source),
                "status": "match", "expected": bundle["sha256"], "actual": bundle["sha256"],
                "detail": "recomputed digest equals the stored digest"}, source_check]
@@ -160,15 +188,26 @@ with review:
     st.subheader("Reviewer sign-offs")
     st.caption(f"Append-only log outside the hashed bundle: {WHERE['signoff_log']}. "
                "Records are added with `python -m audit.signoff sign`; this page does not write them.")
+    st.write(f"Reviewer signatures: {'required' if signature_required else 'optional'}. "
+             f"Reviewer key allowlist: {allowlist['status']} — {allowlist['detail']}.")
+    st.caption("`status` says whether a record still applies to these files. `signature_status` says "
+               "separately what its signature shows. A valid signature proves a holder of a listed "
+               "private key signed the record; it does not prove who holds the key, how carefully they "
+               "reviewed, or any institutional authority. An unsigned owner name is unverified typed text.")
     if signoffs["rows"]:
         table = pd.DataFrame(signoffs["rows"]).reindex(columns=[
-            "sequence", "status", "decision", "owner", "role", "date", "conditions", "reason",
-            "notes", "bundle_sha256"])
+            "sequence", "status", "signature_status", "signature_key_id", "decision", "owner", "role",
+            "date", "conditions", "reason", "signature_detail", "notes", "bundle_sha256"])
         table["conditions"] = table["conditions"].map(lambda c: "; ".join(c) if isinstance(c, list) else "")
         st.dataframe(table, width="stretch", hide_index=True)
         stale = [row for row in signoffs["rows"] if row["status"] != "current"]
         if stale:
             st.warning(f"{len(stale)} sign-off(s) do not apply to this bundle as it is now: "
                        + "; ".join(f"record {row['line_index'] + 1} {row['status']}" for row in stale))
+        unverified = [row for row in signoffs["rows"] if row["signature_status"] not in {VALID, UNSIGNED}]
+        if unverified:
+            st.error(f"{len(unverified)} signature(s) do not verify: "
+                     + "; ".join(f"record {row['line_index'] + 1} {row['signature_status']}"
+                                 for row in unverified))
     else:
         st.write("No sign-off has been recorded for this bundle. The decision is open.")

@@ -1,0 +1,5 @@
+{
+  "_note": "Empty template, not read by the code. `python -m audit.signoff key-add` creates reviews/reviewer_keys.json (ignored by Git; override with MODELAUDIT_REVIEWER_KEYS). Each entry under keys is {key ID: {public_key, name, role, revoked_on}}. Public keys only: never put a private key here. No real key has been issued or listed.",
+  "schema": "modelaudit-reviewer-keys/1",
+  "keys": {}
+}
