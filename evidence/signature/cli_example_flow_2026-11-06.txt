@@ -1,0 +1,98 @@
+ModelAudit signature CLI flow, run 2026-11-06 in a temporary folder that was then deleted.
+EXAMPLE ONLY: the key was throwaway and is gone, the reviewer is not a real person, and no real sign-off was recorded.
+The bundle and workpaper were the committed evidence, read without change. <tmp> and <repo> replace local paths.
+
+$ python -m audit.signoff keygen --private-key <tmp>/held/example.pem
+Wrote private key to <tmp>/held/example.pem (owner read/write only). It is not passphrase-protected, so protect that file and never share or commit it.
+Public key: V4o8hG2elqjaqeY8CLhPNAV8iIU9GsAfevNYzxYh33Y=
+Fingerprint (SHA-256): c207dcf78263b1a51b92303071c8a19f9bb6b513654e8c0099221888e021314c
+List it with: python -m audit.signoff key-add --key-id <id> --public-key V4o8hG2elqjaqeY8CLhPNAV8iIU9GsAfevNYzxYh33Y= --owner "Name" --role "Role"
+[exit 0]
+
+file mode: -rw-------@
+
+$ python -m audit.signoff keygen --private-key <tmp>/held/example.pem
+refused: <tmp>/held/example.pem already exists; refusing to overwrite a key file
+[exit 2]
+
+$ python -m audit.signoff keygen --private-key <repo>/reviews/example.pem
+refused: <repo>/reviews/example.pem is inside this repository; keep private keys outside it
+[exit 2]
+
+$ python -m audit.signoff key-add --key-id example-key --public-key V4o8hG2elqjaqeY8CLhPNAV8iIU9GsAfevNYzxYh33Y= --owner EXAMPLE ONLY - not a real reviewer --role Example validator
+Listed key example-key for EXAMPLE ONLY - not a real reviewer (Example validator) in <tmp>/reviewer_keys.json. Fingerprint: c207dcf78263b1a51b92303071c8a19f9bb6b513654e8c0099221888e021314c. Listing does not verify who holds the key.
+[exit 0]
+
+$ python -m audit.signoff keys
+Reviewer keys: ok — 1 key(s) listed
+  example-key: EXAMPLE ONLY - not a real reviewer (Example validator) active fingerprint c207dcf78263b1a51b92303071c8a19f9bb6b513654e8c0099221888e021314c
+[exit 0]
+
+$ python -m audit.signoff sign --bundle german_xgb --bundle-sha256 f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792 --workpaper-sha256 96a8e5e328da20ad91645df8af8f4e5d71d012fccbd3ae73abac0737b775a0ec --role Example validator --decision reject --date 2026-11-06 --owner Someone else --key-id example-key --private-key <tmp>/held/example.pem
+sign-off refused: owner 'Someone else' does not match the name listed for example-key
+[exit 2]
+
+$ python -m audit.signoff sign --bundle german_xgb --bundle-sha256 f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792 --workpaper-sha256 96a8e5e328da20ad91645df8af8f4e5d71d012fccbd3ae73abac0737b775a0ec --role Example validator --decision reject --date 2026-11-06 --owner EXAMPLE ONLY - not a real reviewer --key-id example-key --private-key <tmp>/held/example.pem
+Recorded sign-off 1 in <tmp>/signoffs.jsonl (signed with key example-key)
+[exit 0]
+
+$ python -m audit.signoff show --bundle german_xgb
+Anchor: unconfigured — no separate anchor configured
+Reviewer keys: ok — 1 key(s) listed
+Signatures: optional. A valid signature proves a key holder signed, not who holds the key or how carefully they reviewed.
+german_xgb effective: reject [signature: valid]
+  record 1: integrity=current signature=valid key=example-key
+  {"bundle": "german_xgb", "bundle_sha256": "f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792", "conditions": [], "date": "2026-11-06", "decision": "reject", "line_index": 0, "notes": "", "owner": "EXAMPLE ONLY - not a real reviewer", "reason": "", "recorded_at": "2026-11-06T09:21:42+00:00", "role": "Example validator", "sequence": 1, "signature_detail": "a holder of the private key listed as example-key signed this record; this does not prove who holds the key or how carefully they reviewed", "signature_key_id": "example-key", "signature_status": "valid", "status": "current", "workpaper_sha256": {"html": "96a8e5e328da20ad91645df8af8f4e5d71d012fccbd3ae73abac0737b775a0ec", "pdf": "4fd76ca72a3b287ee1b6441bfb040acd21fa2ad5925fb3a4902c056fab6f7684"}}
+[exit 0]
+
+# record edited to decision=approve and its record hash rebuilt, so the chain still passes
+
+$ python -m audit.signoff show --bundle german_xgb
+Anchor: unconfigured — no separate anchor configured
+Reviewer keys: ok — 1 key(s) listed
+Signatures: optional. A valid signature proves a key holder signed, not who holds the key or how carefully they reviewed.
+german_xgb effective: approve [signature: bad_signature]
+  record 1: integrity=current signature=bad_signature key=example-key
+  {"bundle": "german_xgb", "bundle_sha256": "f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792", "conditions": [], "date": "2026-11-06", "decision": "approve", "line_index": 0, "notes": "", "owner": "EXAMPLE ONLY - not a real reviewer", "reason": "", "recorded_at": "2026-11-06T09:21:42+00:00", "role": "Example validator", "sequence": 1, "signature_detail": "record was altered after signing or signed by another key", "signature_key_id": "example-key", "signature_status": "bad_signature", "status": "current", "workpaper_sha256": {"html": "96a8e5e328da20ad91645df8af8f4e5d71d012fccbd3ae73abac0737b775a0ec", "pdf": "4fd76ca72a3b287ee1b6441bfb040acd21fa2ad5925fb3a4902c056fab6f7684"}}
+[exit 0]
+
+# MODELAUDIT_REQUIRE_SIGNATURE=1 from here
+
+$ python -m audit.signoff show --bundle german_xgb
+Anchor: unconfigured — no separate anchor configured
+Reviewer keys: ok — 1 key(s) listed
+Signatures: required. A valid signature proves a key holder signed, not who holds the key or how carefully they reviewed.
+german_xgb effective: withheld (signatures are required and record 1 is bad_signature)
+  record 1: integrity=current signature=bad_signature key=example-key
+  {"bundle": "german_xgb", "bundle_sha256": "f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792", "conditions": [], "date": "2026-11-06", "decision": "approve", "line_index": 0, "notes": "", "owner": "EXAMPLE ONLY - not a real reviewer", "reason": "", "recorded_at": "2026-11-06T09:21:42+00:00", "role": "Example validator", "sequence": 1, "signature_detail": "record was altered after signing or signed by another key", "signature_key_id": "example-key", "signature_status": "bad_signature", "status": "current", "workpaper_sha256": {"html": "96a8e5e328da20ad91645df8af8f4e5d71d012fccbd3ae73abac0737b775a0ec", "pdf": "4fd76ca72a3b287ee1b6441bfb040acd21fa2ad5925fb3a4902c056fab6f7684"}}
+[exit 0]
+
+$ python -m audit.signoff sign --bundle german_xgb --bundle-sha256 f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792 --workpaper-sha256 96a8e5e328da20ad91645df8af8f4e5d71d012fccbd3ae73abac0737b775a0ec --role Example validator --decision reject --date 2026-11-06 --owner EXAMPLE ONLY - not a real reviewer
+sign-off refused: MODELAUDIT_REQUIRE_SIGNATURE is on, so give --key-id and --private-key
+[exit 2]
+
+# requirement off again
+
+# original signed record restored
+
+$ python -m audit.signoff show --bundle german_xgb
+Anchor: unconfigured — no separate anchor configured
+Reviewer keys: ok — 1 key(s) listed
+Signatures: optional. A valid signature proves a key holder signed, not who holds the key or how carefully they reviewed.
+german_xgb effective: reject [signature: valid]
+  record 1: integrity=current signature=valid key=example-key
+  {"bundle": "german_xgb", "bundle_sha256": "f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792", "conditions": [], "date": "2026-11-06", "decision": "reject", "line_index": 0, "notes": "", "owner": "EXAMPLE ONLY - not a real reviewer", "reason": "", "recorded_at": "2026-11-06T09:21:42+00:00", "role": "Example validator", "sequence": 1, "signature_detail": "a holder of the private key listed as example-key signed this record; this does not prove who holds the key or how carefully they reviewed", "signature_key_id": "example-key", "signature_status": "valid", "status": "current", "workpaper_sha256": {"html": "96a8e5e328da20ad91645df8af8f4e5d71d012fccbd3ae73abac0737b775a0ec", "pdf": "4fd76ca72a3b287ee1b6441bfb040acd21fa2ad5925fb3a4902c056fab6f7684"}}
+[exit 0]
+
+$ python -m audit.signoff key-revoke --key-id example-key --date 2026-11-06
+Revoked key example-key on 2026-11-06; all its signatures now report revoked_key.
+[exit 0]
+
+$ python -m audit.signoff show --bundle german_xgb
+Anchor: unconfigured — no separate anchor configured
+Reviewer keys: ok — 1 key(s) listed
+Signatures: optional. A valid signature proves a key holder signed, not who holds the key or how carefully they reviewed.
+german_xgb effective: reject [signature: revoked_key]
+  record 1: integrity=current signature=revoked_key key=example-key
+  {"bundle": "german_xgb", "bundle_sha256": "f227dc34e8a95f40d643b2cc33ad113d3485495bda17bb91e1f69a7da74b5792", "conditions": [], "date": "2026-11-06", "decision": "reject", "line_index": 0, "notes": "", "owner": "EXAMPLE ONLY - not a real reviewer", "reason": "", "recorded_at": "2026-11-06T09:21:42+00:00", "role": "Example validator", "sequence": 1, "signature_detail": "key example-key was revoked on 2026-11-06; record dates are the signer's own claim, so all its signatures stop counting", "signature_key_id": "example-key", "signature_status": "revoked_key", "status": "current", "workpaper_sha256": {"html": "96a8e5e328da20ad91645df8af8f4e5d71d012fccbd3ae73abac0737b775a0ec", "pdf": "4fd76ca72a3b287ee1b6441bfb040acd21fa2ad5925fb3a4902c056fab6f7684"}}
+[exit 0]

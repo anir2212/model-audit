@@ -3,8 +3,8 @@
 Each scenario starts its own `streamlit run` on a loopback port with environment overrides
 pointing at temporary copies of `evidence/`, opens the page through the Chrome DevTools
 Protocol, waits for the expected banners, opens the "Integrity and sign-off" tab and records
-pass/fail per check. Sign-offs used here are EXAMPLE records written to the temporary folder
-only. Output: `runs/browser/console_check.json` and one PNG screenshot per scenario.
+pass/fail per check. Sign-offs and reviewer keys used here are EXAMPLE records and throwaway keys
+written to the temporary folder only. Output: `runs/browser/console_check.json` and one PNG screenshot per scenario.
 
 Usage: .venv/bin/python scripts/browser_check.py [--chrome PATH] [--out DIR]
 """
@@ -30,8 +30,10 @@ from tornado.websocket import websocket_connect
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tests"))
-from audit.signoff import append_signoff  # noqa: E402
-from conftest import TODAY, SignoffCase, redigest  # noqa: E402
+from audit.reviewer_signature import (add_key, generate_key_file, load_allowlist,  # noqa: E402
+                                      load_private_key, public_key_text)
+from audit.signoff import _record_hash, append_signoff  # noqa: E402
+from conftest import EXAMPLE_OWNER, TODAY, SignoffCase, redigest  # noqa: E402
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 BUNDLE = "german_scorecard"  # first bundle in the selector, shown on page load
@@ -150,6 +152,47 @@ def _scenarios(work: Path) -> list[dict]:
         "MODELAUDIT_RAW_DIR": raw, "MODELAUDIT_SIGNOFF_LOG": c.log},
         "expect": ["Sign-off log integrity failure"],
         "expect_tab": ["record 1 log_integrity_failed"]})
+
+    def keyed_case(name):
+        """A case with one throwaway EXAMPLE key, listed in its own temporary allowlist."""
+        c = case(name)
+        folder = c.log.parent
+        keys = folder / "reviewer_keys.json"
+        add_key(keys, "example-key", public_key_text(generate_key_file(folder / "example.pem", ROOT)),
+                EXAMPLE_OWNER, c.request()["role"])
+        return c, keys, {"key_id": "example-key", "private_key": load_private_key(folder / "example.pem", ROOT),
+                         "allowlist": load_allowlist(keys)}
+
+    c, keys, signer = keyed_case("signed")
+    append_signoff(c.log, c.request(), c.bundle, c.plan, c.plan_sha, c.workpaper(), c.source_match,
+                   today=TODAY, signer=signer)
+    scenarios.append({"name": "signed_example_valid", "env": {
+        "MODELAUDIT_AUDIT_DIR": c.audit, "MODELAUDIT_WORKPAPER_DIR": c.workpapers,
+        "MODELAUDIT_RAW_DIR": raw, "MODELAUDIT_SIGNOFF_LOG": c.log, "MODELAUDIT_REVIEWER_KEYS": keys},
+        "expect": ["Current sign-off: approve_with_conditions by EXAMPLE ONLY",
+                   "Signature valid (key example-key)", "does not prove who holds the key"],
+        "expect_tab": ["Reviewer signatures: optional", "1 key(s) listed", "institutional authority"]})
+    c, keys, signer = keyed_case("altered")
+    record = append_signoff(c.log, c.request(), c.bundle, c.plan, c.plan_sha, c.workpaper(),
+                            c.source_match, today=TODAY, signer=signer)
+    record = {key: value for key, value in record.items() if key != "record_sha256"}
+    record.update(decision="approve", conditions=[])
+    record["record_sha256"] = _record_hash(record)  # the chain passes; only the signature can object
+    c.log.write_text(json.dumps(record, sort_keys=True) + "\n")
+    scenarios.append({"name": "altered_signed_record_chain_rebuilt", "env": {
+        "MODELAUDIT_AUDIT_DIR": c.audit, "MODELAUDIT_WORKPAPER_DIR": c.workpapers,
+        "MODELAUDIT_RAW_DIR": raw, "MODELAUDIT_SIGNOFF_LOG": c.log, "MODELAUDIT_REVIEWER_KEYS": keys},
+        "expect": ["Signature bad_signature", "Do not treat the named reviewer as verified"],
+        "expect_tab": ["record 1 bad_signature"]})
+    c, keys, _ = keyed_case("unsigned_required")
+    append_signoff(c.log, c.request(), c.bundle, c.plan, c.plan_sha, c.workpaper(), c.source_match,
+                   today=TODAY)
+    scenarios.append({"name": "unsigned_withheld_when_required", "env": {
+        "MODELAUDIT_AUDIT_DIR": c.audit, "MODELAUDIT_WORKPAPER_DIR": c.workpapers,
+        "MODELAUDIT_RAW_DIR": raw, "MODELAUDIT_SIGNOFF_LOG": c.log, "MODELAUDIT_REVIEWER_KEYS": keys,
+        "MODELAUDIT_REQUIRE_SIGNATURE": "1"},
+        "expect": ["Sign-off status withheld because signatures are required and record 1 is unsigned"],
+        "expect_tab": ["Reviewer signatures: required"]})
     return scenarios
 
 
@@ -199,7 +242,10 @@ async def main_async(args) -> int:
                         deviceScaleFactor=1, mobile=False)
         for scenario in _scenarios(work):
             port = _port()
-            env = dict(os.environ, **{key: str(value) for key, value in scenario["env"].items()})
+            env = {key: value for key, value in os.environ.items()
+                   if key != "MODELAUDIT_REQUIRE_SIGNATURE"}
+            env["MODELAUDIT_REVIEWER_KEYS"] = str(work / "no_reviewer_keys.json")
+            env.update({key: str(value) for key, value in scenario["env"].items()})
             server = subprocess.Popen(
                 [str(ROOT / ".venv/bin/streamlit"), "run", str(ROOT / "app/streamlit_app.py"),
                  "--server.headless", "true", "--server.address", "127.0.0.1",
@@ -226,7 +272,8 @@ async def main_async(args) -> int:
     import streamlit
     result = {"date": dt.date.today().isoformat(), "browser": version.get("Browser"),
               "streamlit": streamlit.__version__, "passed": passed, "total": total,
-              "note": "Sign-off records in these scenarios are examples written to a temporary folder.",
+              "note": "Sign-off records and reviewer keys in these scenarios are examples written to a "
+                      "temporary folder and deleted afterwards. No real reviewer or key is involved.",
               "scenarios": report}
     (out / "console_check.json").write_text(json.dumps(result, indent=2) + "\n")
     print(f"browser checks passed: {passed}/{total}")

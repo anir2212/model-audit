@@ -4,7 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from audit.signoff import GENESIS, SignoffRefused, append_signoff, assess, main, read_log
+from audit.signoff import (GENESIS, SignoffRefused, anchor_snapshot, append_signoff,
+                           assess, check_anchor, main, read_log)
 from conftest import EXAMPLE_OWNER, TODAY, redigest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -157,6 +158,65 @@ def test_command_line_refuses_stale_hash_and_records_valid_example(signoff_case,
     assert main(base + ["--bundle-sha256", signoff_case.bundle["sha256"]]) == 0
     assert main(["show", "--bundle", "german_xgb"]) == 0
     assert "effective: reject" in capsys.readouterr().out
+    anchor = signoff_case.log.with_suffix(".anchor.json")
+    assert main(["anchor", "--output", str(anchor)]) == 0
+    monkeypatch.setenv("MODELAUDIT_SIGNOFF_ANCHOR", str(anchor))
+    signoff_case.log.unlink()
+    assert main(base + ["--bundle-sha256", signoff_case.bundle["sha256"]]) == 2
+    assert not signoff_case.log.exists()
+
+
+def test_separate_anchor_detects_truncation_and_rewrite(signoff_case, tmp_path):
+    first = _append(signoff_case)
+    records, broken, _ = read_log(signoff_case.log)
+    anchor = tmp_path / "anchor.json"
+    anchor.write_text(json.dumps(anchor_snapshot(records, broken)))
+    assert check_anchor(records, broken, anchor)["status"] == "match"
+    _append(signoff_case, request=signoff_case.request(decision="reject", conditions=[]))
+    records, broken, _ = read_log(signoff_case.log)
+    assert check_anchor(records, broken, anchor)["status"] == "behind"
+    anchor.write_text(json.dumps(anchor_snapshot(records, broken)))
+    signoff_case.log.write_text(json.dumps(first) + "\n")
+    records, broken, _ = read_log(signoff_case.log)
+    assert check_anchor(records, broken, anchor)["status"] == "truncated"
+    signoff_case.log.unlink()
+    _append(signoff_case, request=signoff_case.request(decision="reject", conditions=[]))
+    records, broken, _ = read_log(signoff_case.log)
+    assert check_anchor(records, broken, anchor)["status"] == "truncated"
+    anchor.write_text(json.dumps(anchor_snapshot(records, broken)))
+    signoff_case.log.unlink()
+    _append(signoff_case)
+    records, broken, _ = read_log(signoff_case.log)
+    assert check_anchor(records, broken, anchor)["status"] == "mismatch"
+
+
+def test_anchor_cli_exports_only_valid_log_and_refuses_overwrite(signoff_case, monkeypatch, tmp_path, capsys):
+    monkeypatch.setenv("MODELAUDIT_SIGNOFF_LOG", str(signoff_case.log))
+    anchor = tmp_path / "anchor.json"
+    assert main(["anchor", "--output", str(anchor)]) == 2 and not anchor.exists()
+    _append(signoff_case)
+    assert main(["anchor", "--output", str(anchor)]) == 0
+    original = anchor.read_bytes()
+    assert main(["anchor", "--output", str(anchor)]) == 2 and anchor.read_bytes() == original
+    monkeypatch.setenv("MODELAUDIT_SIGNOFF_ANCHOR", str(anchor))
+    assert main(["show"]) == 0
+    assert "Anchor: match" in capsys.readouterr().out
+    signoff_case.log.unlink()
+    assert main(["show"]) == 0
+    assert "Anchor: truncated" in capsys.readouterr().out
+
+
+def test_anchor_rejects_bad_file_and_broken_log(signoff_case, tmp_path):
+    _append(signoff_case)
+    anchor = tmp_path / "anchor.json"
+    anchor.write_text('{bad json')
+    records, broken, _ = read_log(signoff_case.log)
+    assert check_anchor(records, broken, anchor)["status"] == "invalid"
+    assert check_anchor(records, broken, tmp_path / "missing.json")["status"] == "missing"
+    anchor.write_text(json.dumps(anchor_snapshot(records, broken)))
+    signoff_case.log.write_text(signoff_case.log.read_text().replace("approve_with_conditions", "approve"))
+    records, broken, _ = read_log(signoff_case.log)
+    assert check_anchor(records, broken, anchor)["status"] == "log_integrity_failed"
 
 
 def test_repository_ships_only_an_empty_template():

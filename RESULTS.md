@@ -49,3 +49,43 @@ The browser check starts `streamlit run` once per scenario on a loopback port, l
 Limits: the sign-off log is a local file with a SHA-256 hash chain. The chain shows an edited, reordered or deleted earlier line. It does not show removal of the newest lines, and it is not a signature or access control: anyone who can write the file can rewrite it consistently. Source rechecks prove only that the ZIP on disk equals the hash recorded when the bundle was built. They do not re-derive the model results from it.
 
 A live LLM evaluation, true timestamped out-of-time cohort, institution-approved policy/cost thresholds, legal fairness review, external validation, an actual named reviewer's decision, access control and production monitoring are still open.
+
+## Optional separate sign-off anchor — 1 November 2026
+
+No model, measured audit bundle, workpaper or 23 October browser evidence changed. The sign-off CLI can now export a valid nonempty log's record count and head SHA-256 to a new file; `MODELAUDIT_SIGNOFF_ANCHOR` asks the CLI and console to compare that separately kept head with the current log. In temporary test examples, a match, newer unanchored records, newest-line truncation, a consistently rewritten log, an invalid or missing anchor, and a broken log are distinguished. A failed configured anchor withholds the effective decision in the console/CLI, and the CLI refuses a new sign-off. `make test` passed **66/66** (62 before; three new sign-off tests and one Streamlit AppTest). No new real-browser run was made; the 37/37 browser result above remains dated 23 October.
+
+This is a local verifier, not a stored external anchor or authenticated sign-off. No real reviewer record or independently controlled anchor exists in the repository. Detection of newest-line removal or consistent rewrite depends on someone keeping the exported anchor outside the log writer's control. If the same actor can replace both files, this check cannot establish integrity. Independent dated validation, approved policy thresholds, legal/domain review, live LLM cases and monitoring remain open.
+
+## Optional signed reviewer identity — 6 November 2026
+
+No model was retrained, no audit was rerun and no metric above changed. The 29 files under `evidence/`, `evidence.json` and `workpaper.html` committed before this work are byte-identical: `shasum -a 256` over those paths in `git ls-files` order, hashed again, gave `e5ba62195d6ccefd7de8fa4f651274a13b5a8aad1aee8e035ea9a75d7a66f45f` before and after. The only additions to `evidence/` are the three new dated files linked below. **No real reviewer signed and no real key was issued.** Every key and sign-off below is a throwaway example in a temporary folder.
+
+| Check | Command | Result |
+|---|---|---|
+| Unit and AppTest suite, before | `make test` | **66/66** passed |
+| Unit and AppTest suite, after | `make test` | **149/149** passed (83 new: 78 in `tests/test_reviewer_signature.py`, 5 console AppTests) |
+| Console AppTests, before and after | `make app-test` | **12/12**, then **17/17** passed |
+| Real console in headless Chrome | `make browser-check` | **57/57** checks over 9 scenarios ([saved result](evidence/browser/console_check_2026-11-06.json), [screenshot of an altered signed record](evidence/browser/altered_signed_record_chain_rebuilt_2026-11-06.png)). The original 6 scenarios kept their 37 checks and all passed; 3 new signature scenarios added 20. Chrome 156.0.8078.80, Streamlit 1.50.0. |
+| Command-line flow in a temporary folder | `tests/test_reviewer_signature.py`, one saved run | Passed ([example transcript](evidence/signature/cli_example_flow_2026-11-06.txt)) |
+| Tracked-key check | `make key-check` | Passed: no private key, sign-off log or reviewer allowlist is tracked or staged |
+
+The test outcomes, all on example records:
+
+| Case | Reported `signature_status` |
+|---|---|
+| Signed by a listed key, with matching name and role | `valid` |
+| No signature, including legacy records | `unsigned`; never shown as signed |
+| Forged signature, or one made with another key | `bad_signature` |
+| Any field edited or added after signing, with the chain rebuilt | `bad_signature` |
+| Signed record moved to another position, or given a different earlier record | `bad_signature` |
+| Signature relabeled with another listed key's ID | `bad_signature` |
+| Key ID absent from the allowlist, or no allowlist | `unknown_key` |
+| Valid signature, but a claimed name or role that differs from the listing | `name_mismatch` or `role_mismatch` |
+| Key revoked | `revoked_key`, for all of its records |
+| Faulty allowlist (10 kinds, including one containing a private key) | `allowlist_invalid` |
+
+Tests also confirm that the key file is created with mode 0600 even under a permissive umask; that key generation refuses an existing file, a symlink, this repository and another Git working tree; and that signing refuses a key file readable by others. `MODELAUDIT_REQUIRE_SIGNATURE` withholds the decision for unsigned and failed records and for a broken chain, with no fallback to an older signed record. By default the decision logic is unchanged and only the status is added. As a one-off check that was not saved as evidence, six single-line deliberate faults in the code (chain link left out of the signature, signature left out of the record hash, revocation ignored, name check removed, key file mode 0644, overwrite allowed) each made the suite fail, and each fault was then reverted.
+
+Limits: a signature proves that a holder of the private key signed these exact record bytes. It does not prove who holds the key, that the person reviewed carefully, or any institutional authority. The allowlist only records what its keeper listed, and someone who can edit both it and the log can list a new key and re-sign everything. Signatures do not detect removal of the newest records; only a separately held anchor can. A log writer can also strip the newest record's signature, which then reads as `unsigned`, so relying on signatures requires the requirement option, and that option is an environment setting rather than access control. Key files are protected by file permissions only, without a passphrase or hardware. Record dates are the signer's own claim, not trusted timestamps. This has had no independent security review, and the canonical form is project-defined, not a claim of RFC 8785 conformance.
+
+A real named reviewer's decision, real key issuance, access control, a stored independent anchor, independent dated validation, approved policy thresholds, legal/domain review, live LLM cases and monitoring remain open.

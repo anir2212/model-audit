@@ -15,8 +15,19 @@ DEFAULTS = {
     "workpapers": ("MODELAUDIT_WORKPAPER_DIR", ROOT / "runs/workpapers"),
     "raw": ("MODELAUDIT_RAW_DIR", ROOT / "data/raw"),
     "signoff_log": ("MODELAUDIT_SIGNOFF_LOG", ROOT / "reviews/signoffs.jsonl"),
+    "reviewer_keys": ("MODELAUDIT_REVIEWER_KEYS", ROOT / "reviews/reviewer_keys.json"),
 }
 
 
 def resolve() -> dict[str, Path]:
-    return {key: Path(os.environ.get(variable, default)) for key, (variable, default) in DEFAULTS.items()}
+    result = {key: Path(os.environ.get(variable, default)) for key, (variable, default) in DEFAULTS.items()}
+    anchor = os.environ.get("MODELAUDIT_SIGNOFF_ANCHOR")
+    if anchor:
+        result["signoff_anchor"] = Path(anchor)
+    return result
+
+
+def require_signature() -> bool:
+    """True when `MODELAUDIT_REQUIRE_SIGNATURE` is set to anything but an explicit off value."""
+    value = os.environ.get("MODELAUDIT_REQUIRE_SIGNATURE", "").strip().lower()
+    return value not in {"", "0", "false", "no", "off"}

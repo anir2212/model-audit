@@ -2,7 +2,7 @@ PYTHON ?= .venv/bin/python
 export MPLCONFIGDIR := $(CURDIR)/.mplconfig
 export OPENBLAS_NUM_THREADS := 2
 export OMP_NUM_THREADS := 2
-.PHONY: data models survival explain testsuite llm workpapers audit test app-test browser-check dashboard
+.PHONY: data models survival explain testsuite llm workpapers audit test app-test key-check browser-check dashboard
 
 data:
 	$(PYTHON) -m data.fetch
@@ -24,6 +24,8 @@ test:
 	$(PYTHON) -m pytest -q
 app-test:
 	$(PYTHON) -m pytest -q tests/test_app.py
+key-check:
+	$(PYTHON) scripts/check_no_committed_keys.py
 browser-check:
 	$(PYTHON) scripts/browser_check.py
 dashboard:
